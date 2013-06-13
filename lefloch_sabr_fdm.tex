@@ -126,7 +126,7 @@ Q_R &= 4.5 \hat{Q}^{\frac{\delta}{3}}_R - 4.5 \hat{Q}^{\frac{2\delta}{3}}_R  + \
 where $\hat{Q}^{\frac{\delta}{3}}$ is $Q$ computed by implicit Euler with 3 time steps of $\frac{\delta}{3}$ and $\hat{Q}^{\frac{2\delta}{3}}$ is $Q$ computed by implicit Euler with a time step of $\frac{2\delta}{3}$ and $\frac{\delta}{3}$. Being linear combinations of implicit Euler, those schemes are moment preserving.
 
 \subsection{Lawson-Swayne}
-A slightly faster unconditionally stable scheme is presented as a remedy to Crank-Nicolson in \citep{lawson1978extrapolation}. Let $b=1-\frac{\sqrt{2}}{2}$, it consists in applying two implicit Euler steps with time-step of $b\delta$ and an extrapolation on the values at those two steps.\\
+A slightly faster second order unconditionally stable scheme is presented as a remedy to Crank-Nicolson in \citep{lawson1976simple, lawson1978extrapolation}. Let $b=1-\frac{\sqrt{2}}{2}$, it consists in applying two implicit Euler steps with time-step of $b\delta$ and an extrapolation on the values at those two steps.\\
 \\
 First stage:
 \begin{align}\label{eqn_lawson_swayne}
@@ -153,7 +153,7 @@ The scheme is moment preserving as it can also be seen as a linear combination o
 \subsection{TR-BDF2}
 TR-BDF2 is a two-stage method where the first stage consists in applying the (weighted) trapezoidal rule (Crank-Nicolson) and the second stage consists in applying the second order backward difference scheme (BDF2) on the first stage result and the first stage initial input \citep{bank1985transient, Le07}. It is second order accurate in time and $L$-stable. It is not to be confused with the simpler multistep method BDF2: the full step only depends on the previous full step while BDF2 depends on the two previous timesteps and can lose its accuracy \citep{windcliff2001shout} with variable timesteps and linear complimentary problems. This scheme does not suffer from such drawbacks. The scheme has been applied to finance in the context of American option pricing \citep{floc2013tr}.
 \begin{align}
-Q^{n+\alpha} &= f_n + \frac{\alpha \delta}{2}\left(\frac{\partial^2 M^{n+\alpha} Q^n}{\partial F^2}+\frac{\partial^2 M^{n+\alpha} Q^{n+\alpha}}{\partial F^2}\right)\\
+Q^{n+\alpha} &= Q^n + \frac{\alpha \delta}{2}\left(\frac{\partial^2 M^{n+\alpha} Q^n}{\partial F^2}+\frac{\partial^2 M^{n+\alpha} Q^{n+\alpha}}{\partial F^2}\right)\\
 Q^{n+1} &= \frac{1}{2-\alpha}\left(\frac{1}{\alpha} Q^{n+\alpha} - \frac{(1-\alpha)^2}{\alpha}Q^n + \delta(1-\alpha)\frac{\partial^2 M^{n+1} Q^{n+1}}{\partial F^2})\right)
 \end{align}
 
@@ -172,6 +172,9 @@ We can therefore just compute the initial value $\frac{1}{2} \alpha^2 (1+2\rho\n
 M_j^{n+1} =e_j M_j^{n} 
 \end{equation}
 This can be easily extended to multiple time-step sizes.
+
+For multi-stage schemes, it is also possible to consider $M$ as piecewise constant between full time-steps and thus to avoid its computation for fractions of time-steps. In our tests, this led to a slightly decreased accuracy and little performance gain. The increase in error was particularly visible for long term options and large time-steps. We did not make that approximation for the tests presented in the next section.
+
 \section{Numerical Results}
 \subsection{Oscillations}
 \begin{figure}[htb]

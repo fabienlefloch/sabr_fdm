@@ -1,11 +1,27 @@
 # Hagan CN oscillations
 
 #--density 500 
-M<-read.table('/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/density_hagan_500_40.txt', header=TRUE)
+M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_500_40.txt', header=TRUE)
 qplot(Strike, Density, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")
-M = M[M$Scheme == "Hagan" | M$Scheme =="CN",]
-qplot(Strike, Density, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")+scale_color_manual(name="Method",values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+scale_linetype_manual(name="Method", values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(xlim=c(0.02,3))
-ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/density_hagan_cn_500_40.eps",width=8,height=4)
+M0 = M[M$Scheme == "Hagan" | M$Scheme =="CN",]
+qplot(Strike, Density, data=M0, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")+scale_color_manual(name="Method",values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+scale_linetype_manual(name="Method", values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(xlim=c(0.02,3))
+ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_40.eps",width=8,height=4)
+M0 = M[M$Scheme == "Hagan" | M$Scheme =="RAN",]
+qplot(Strike, Density, data=M0, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")+scale_color_manual(name="Method",values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+scale_linetype_manual(name="Method", values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(xlim=c(0.02,3))
+
+
+
+M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_500_5.txt', header=TRUE)
+qplot(Strike, Density, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")
+M0 = M[M$Scheme == "Hagan" | M$Scheme =="RAN" ,]
+qplot(Strike, Density, data=M0, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")+scale_color_manual(name="Method",values=c(2,1),labels=c("Hagan Formula","Rannacher"))+scale_linetype_manual(name="Method", values=c(2,1),labels=c("Hagan Formula","Rannacher"))+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(xlim=c(0.02,3))
+ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5.eps",width=5,height=4)
+M0 = M[M$Scheme == "Hagan" | M$Scheme =="TRBDF2",]
+qplot(Strike, Density, data=M0, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")+scale_color_manual(name="Method",values=c(2,1),labels=c("Hagan Formula","TR-BDF2"))+scale_linetype_manual(name="Method", values=c(2,1),labels=c("Hagan Formula","TR-BDF2"))+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(xlim=c(0.02,3))
+ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_5.eps",width=5,height=4)
+M0 = M[M$Scheme == "Hagan" | M$Scheme =="LMG3",]
+qplot(Strike, Density, data=M0, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")+scale_color_manual(name="Method",values=c(2,1),labels=c("Hagan Formula","LMG3"))+scale_linetype_manual(name="Method", values=c(2,1),labels=c("Hagan Formula","LMG3"))+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(xlim=c(0.02,3))
+ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_lmg3_500_5.eps",width=5,height=4)
 
 # ---- 500  ----
 #M<-read.table('/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/density_hagan_cn_500_40.txt', header=TRUE)
@@ -102,13 +118,13 @@ qplot(Time, Error, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Vol
 ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_ah_500_time_all.eps",width=5,height=4)
 
 #perf density 500 all
-M<-read.table('/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_density_hagan_500_all.txt', header=TRUE)
+M<-read.table('/home/fabien/mypapers/sabr_fdm/perf_density_hagan_500_all.txt', header=TRUE)
 
 qplot(TimeSteps, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Density Max Error", xlab="Number of time steps")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
-ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_density_hagan_500_steps.eps",width=6,height=4)
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_density_hagan_500_steps.eps",width=6,height=4)
 
 qplot(Time, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Density Max Error", xlab="time")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
-ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_density_hagan_500_time.eps",width=6,height=4)
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_density_hagan_500_time.eps",width=6,height=4)
 
 M<-read.table('/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_density_ah_500.txt', header=TRUE)
 
@@ -127,13 +143,13 @@ ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_v
 qplot(Time, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Volatility Max Error", xlab="time")+scale_y_log10()+scale_x_log10()
 ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_vol_hagan_500_time.eps",width=5,height=4)
 
-M<-read.table('/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_vol_ah_500_full.txt', header=TRUE)
+M<-read.table('/home/fabien/mypapers/sabr_fdm/perf_vol_ah_500_full.txt', header=TRUE)
 
 qplot(TimeSteps, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Volatility Max Error", xlab="Number of time steps")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
-ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_vol_ah_500_steps.eps",width=6,height=4)
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_vol_ah_500_steps.eps",width=6,height=4)
 
 qplot(Time, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Volatility Max Error", xlab="time")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
-ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_vol_ah_500_time.eps",width=6,height=4)
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_vol_ah_500_time.eps",width=6,height=4)
 
 #perf 250
 M<-read.table('/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_hagan_250_all.txt', header=TRUE)
@@ -151,6 +167,12 @@ ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_a
 
 qplot(Time, Error, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Volatility Error", xlab="Time(s)")+scale_y_log10()+scale_x_log10()
 ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_ah_250_time_all.eps",width=5,height=4)
+
+
+# M on 5 steps
+M<-read.table('/home/fabien/mypapers/sabr_fdm/densitym_hagan_cn_500_5.txt', header=TRUE)
+qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line")
++coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 
 
 # ---- 640  ----

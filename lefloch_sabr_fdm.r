@@ -174,6 +174,9 @@ M<-read.table('/home/fabien/mypapers/sabr_fdm/densitym_hagan_cn_500_5.txt', head
 qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line")
 +coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 
+M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_ls_500_5_5.txt', header=TRUE)
+qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, M0, data=M, color=factor(t), linetype=factor(t), geom="line")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 
 # ---- 640  ----
 M<-read.table('/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/density_hagan_cn_640_40.txt', header=TRUE)

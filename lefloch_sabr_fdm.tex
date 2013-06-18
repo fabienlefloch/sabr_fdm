@@ -20,7 +20,7 @@
 \affil{$^\star$Calypso Technology, 106 rue de La Bo\'{e}tie, 75008 Paris\\$^\dag$Clarus Financial Technology, London}
 %
 \date{\today}
-\received{v1.1 released June 2013}
+\received{v1.2 released June 2013}
 
 \maketitle
 \newcommand{\sgn}{\mathop{\mathrm{sgn}}}
@@ -73,16 +73,16 @@ The formula for $\Gamma$ is also undefined for $F=f$, in which case we just use 
 
 We use the same parameters as the example of negative density with the standard SABR formula in \citep{hagan2013arbitrage}: $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%$ and forward $f=1$ at $T=1$, a relatively fine discretization in the rate dimension (500 points, that is $h = 0.01005$) and large time-steps (40 steps, that is $\delta=0.025$). \cite{hagan2013arbitrage} recommend between 200 and 500 points and 30 to 100 time-steps.
 
-Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the forward. To guarantee the absence of oscillations, the \emph{Courant number}  should be small enough $\Psi = M \frac{\delta}{h^2}\leq 1$. This corresponds directly to the stability of the explicit Euler part of Crank-Nicolson. In practice, a higher value is acceptable because of a slight damping in Crank-Nicolson \citep{lawson1978extrapolation}. $M$ depends on $F$, but we can use the at-the-money value at $f$, as the spike is located at-the-money, that is 
+Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the forward. To guarantee the absence of oscillations, the \emph{Courant number}  should be small enough $\Psi = M \frac{\delta}{h^2}\leq 1$ (Theorem 2.2 in \cite{morton2005numerical}). This corresponds directly to the stability of the explicit Euler part of Crank-Nicolson. In practice, a higher value is acceptable because of a slight damping in Crank-Nicolson \citep{lawson1978extrapolation}. $M$ depends on $F$, but we can use the at-the-money value at $f$, as the spike is located at-the-money, that is 
 \begin{align}
-\Psi &= \frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) e^{\rho\nu\alpha\beta f^{\beta-1} T} f^{2\beta} \frac{\delta}{h^2}
+\Psi &= \frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) f^{2\beta} \frac{\delta}{h^2}
 \end{align} 
 
 \begin{figure}[htb]
   \begin{center}  
-    \subfigure[with 40 time steps]{\label{fig:density_hagan_cn_500_40_5}
+    \subfigure[with 40 time steps $\Psi = 15.16$]{\label{fig:density_hagan_cn_500_40_5}
 \includegraphics[width=7cm]{density_hagan_cn_500_40_5.eps}}
-  \subfigure[with 1280 time steps]{\label{fig:density_hagan_cn_500_1280_5}
+  \subfigure[with 1280 time steps $\Psi = 0.47$]{\label{fig:density_hagan_cn_500_1280_5}
 \includegraphics[width=7cm]{density_hagan_cn_500_1280_5.eps}}
   \end{center}
      \caption{\label{fig:density_hagan_500_40_5} First 4 time steps of the probability density in Hagan PDE discretized with Crank-Nicolson}
@@ -132,13 +132,13 @@ A slightly faster second order unconditionally stable scheme is presented as a r
 First stage:
 \begin{align}\label{eqn_lawson_swayne}
 \begin{split}
-Q_j^{n+b}-Q_j^n &= \frac{b\delta}{h^2} \left(M_{j+1}^{n+b}Q_{j+1}^{n+\frac{1}{2}}-2M_j^{n+b}Q_j^{n+\frac{1}{2}}+M_{j-1}^{n+b}Q_{j-1}^{n+b} \right) \\
+Q_j^{n+b}-Q_j^n &= \frac{b\delta}{h^2} \left(M_{j+1}^{n+b}Q_{j+1}^{n+b}-2M_j^{n+b}Q_j^{n+b}+M_{j-1}^{n+b}Q_{j-1}^{n+b} \right) \\
 Q_L^{n+b}-Q_L^n &= \frac{b\delta}{h} \left(M_{1}^{n+b}Q_{1}^{n+b}-M_0^{n+b}Q_0^{n+b}\right) \\
 Q_R^{n+b}-Q_R^n &= \frac{b\delta}{h} \left(M_{J+1}^{n+b}Q_{J+1}^{n+b}-M_J^{n+b}Q_J^{n+b}\right)
 \end{split}\\
 \intertext{Second stage:}
 \begin{split}
-Q_j^{n+2b}-Q_j^{n+b} &= \frac{b\delta}{h^2} \left(M_{j+1}^{n+2b}Q_{j+1}^{n+\frac{1}{2}}-2M_j^{n+2b}Q_j^{n+\frac{1}{2}}+M_{j-1}^{n+2b}Q_{j-1}^{n+2b} \right) \\
+Q_j^{n+2b}-Q_j^{n+b} &= \frac{b\delta}{h^2} \left(M_{j+1}^{n+2b}Q_{j+1}^{n+2b}-2M_j^{n+2b}Q_j^{n+2b}+M_{j-1}^{n+2b}Q_{j-1}^{n+2b} \right) \\
 Q_L^{n+2b}-Q_L^{n+b} &= \frac{b\delta}{h} \left(M_{1}^{n+2b}Q_{1}^{n+2b}-M_0^{n+2b}Q_0^{n+2b}\right) \\
 Q_R^{n+2b}-Q_R^{n+b} &= \frac{b\delta}{h} \left(M_{J+1}^{n+2b}Q_{J+1}^{n+2b}-M_J^{n+2b}Q_J^{n+2b}\right)
 \end{split}\\

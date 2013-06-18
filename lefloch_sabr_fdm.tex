@@ -20,7 +20,7 @@
 \affil{$^\star$Calypso Technology, 106 rue de La Bo\'{e}tie, 75008 Paris\\$^\dag$Clarus Financial Technology, London}
 %
 \date{\today}
-\received{v1.2 released June 2013}
+\received{v1.3 released June 2013}
 
 \maketitle
 \newcommand{\sgn}{\mathop{\mathrm{sgn}}}
@@ -156,7 +156,7 @@ The scheme is moment preserving as it can also be seen as a linear combination o
 \subsection{TR-BDF2}
 TR-BDF2 is a two-stage method where the first stage consists in applying the (weighted) trapezoidal rule (Crank-Nicolson) and the second stage consists in applying the second order backward difference scheme (BDF2) on the first stage result and the first stage initial input \citep{bank1985transient, Le07}. It is second order accurate in time and $L$-stable. It is not to be confused with the simpler multistep method BDF2: the full step only depends on the previous full step while BDF2 depends on the two previous timesteps and can lose its accuracy \citep{windcliff2001shout} with variable timesteps and linear complimentary problems. This scheme does not suffer from such drawbacks. The scheme has been applied to finance in the context of American option pricing \citep{floc2013tr}.
 \begin{align}
-Q^{n+\alpha} &= Q^n + \frac{\alpha \delta}{2}\left(\frac{\partial^2 M^{n+\alpha} Q^n}{\partial F^2}+\frac{\partial^2 M^{n+\alpha} Q^{n+\alpha}}{\partial F^2}\right)\\
+Q^{n+\alpha} &= Q^n + \frac{\alpha \delta}{2}\left(\frac{\partial^2 M^{n} Q^n}{\partial F^2}+\frac{\partial^2 M^{n+\alpha} Q^{n+\alpha}}{\partial F^2}\right)\\
 Q^{n+1} &= \frac{1}{2-\alpha}\left(\frac{1}{\alpha} Q^{n+\alpha} - \frac{(1-\alpha)^2}{\alpha}Q^n + \delta(1-\alpha)\frac{\partial^2 M^{n+1} Q^{n+1}}{\partial F^2})\right)
 \end{align}
 
@@ -340,7 +340,7 @@ LMG3 & 0.010050251256 & 1.385108845032 & 0.036878097804 & 0.000775853690\\
 LS & 0.010050251256 & 1.378405046490 & 0.036466946406 & 0.000797983056\\
 LMG2 & 0.010050251256 & 1.390737156096 & 0.037351038244 & 0.000808345304\\
 RE & 0.010050251256 & 1.342391047522 & 0.036966009503 & 0.000850746756\\
-TRBDF2 & 0.010050251256 & 1.378368965895 & 0.036464938933 & 0.000797736766\\
+TRBDF2 & 0.010050251256 & 1.378343390764 & 0.036463543893 & 0.000797557279\\
 CN & 0.010050251256 & -76.222597308083 & 0.036145997780 & 0.000811969902\\
 \hline
 \end{tabular}

@@ -30,7 +30,7 @@ This paper presents various finite difference schemes applied to the SABR arbitr
 \end{abstract}
 
 \section{Introduction}
-It is now well known that original SABR analytic formula from \citep{hagan2002managing} used to compute options implied volatilities is not arbitrage free. Especially, the probability density can become negative for low strikes and long maturities. Given the low rates environment we live in today, many authors have proposed various improvements to the original formula \citep{obloj2007fine, johnson2009arbitrage, paulot2009asymptotic, benaim2008arbitrage}.  A single step finite difference method is proposed in \citep{andreasen2011zabr} which leads to an arbitrage free SABR-like model. While the approach from Andreasen and Huge converges for short maturities to the original SABR analytic formula, it is deliberately different, even at the money, for longer expiries.
+It is now well known that original SABR analytic formula from \citep{hagan2002managing} used to compute options implied volatilities is not arbitrage free. Especially, the probability density can become negative for low strikes and long maturities. Given the low rates environment we live in today, many authors have proposed various improvements to the original formula \citep{obloj2007fine, johnson2009arbitrage, paulot2009asymptotic, benaim2008arbitrage}.  A single step finite difference method is proposed in \citep{andreasen2011zabr} which leads to an arbitrage free SABR-like model. Whilst the approach from Andreasen and Huge converges for short maturities to the original SABR analytic formula, it is (deliberately) different for longer expiries, even at the money.
 
 
 Hagan himself proposed a new arbitrage free SABR solution, based on a finite difference discretization of the probability density in \citep{hagan2013arbitrage}. This approach allows to stay very close to the original SABR analytic formula, well known and widely used, while being arbitrage free, and thus allows pricing with low rates. The authors use a Crank-Nicolson time-stepping, which is known to have oscillation issues \citep{GiCa2006} as it is only $A$-stable but not $L$-stable \citep{Le07}. We will show that this issue arises in the context of SABR pricing, and propose alternative schemes with increased stability. Speed and accuracy were key ingredients in popularising the original SABR formula. Given that for a 30 year cap on a 3M LIBOR, there are potentially 119 PDE to solve, we will focus our attention to performance of the proposed schemes, as well as to what extent the discretization grid can be reduced in size.
@@ -88,13 +88,13 @@ Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the fo
      \caption{\label{fig:density_hagan_500_40_5} First 4 time steps of the probability density in Hagan PDE discretized with Crank-Nicolson}
 \end{figure}
 
-In our example, in Figures \ref{fig:density_hagan_cn_500_40} and \ref{fig:density_hagan_cn_500_40_5} $\Psi \approx 15$ while Figure \ref{fig:density_hagan_cn_500_1280_5} shows that in deed when $\Psi < 1$ there are no oscillations. We will see in the next sections that a much smaller number of time steps can be used, while still preserving good accuracy, with other finite difference time-stepping techniques.
+In our example, in Figures \ref{fig:density_hagan_cn_500_40} and \ref{fig:density_hagan_cn_500_40_5} $\Psi \approx 15$ while Figure \ref{fig:density_hagan_cn_500_1280_5} shows that indeed when $\Psi < 1$ there are no oscillations. We will see in the next sections that a much smaller number of time steps can be used, while still preserving good accuracy, with other finite difference time-stepping techniques.
 
 \section{Alternative Schemes}
 The boundary condition described by equation (\ref{boundary_condition}) is applicable to all schemes considered in this section as it is independent of the time-stepping.
 
 \subsection{Rannacher}
-A common fix for Crank-Nicolson oscillations related to non smooth initial data is Rannacher time-stepping \citep{rannacher1984finite, GiCa2006}. It consists in introducing two half time-steps of implicit Euler time-stepping before applying Crank-Nicolson, because implicit Euler has much stronger damping properties. This comes at a cost in accuracy as implicit Euler is an order-1 scheme in time, especially when only a few time-steps are needed. 
+A common fix for Crank-Nicolson oscillations related to non smooth initial data is Rannacher time-stepping \citep{rannacher1984finite, GiCa2006}. It consists of introducing two half time-steps of implicit Euler time-stepping before applying Crank-Nicolson, because implicit Euler has much stronger damping properties. This comes at a cost in accuracy as implicit Euler is an order-1 scheme in time, especially when only a few time-steps are needed. 
 The SABR density discretization will still be moment preserving if we discretize the Euler half steps as:
 \begin{align}\label{eqn_euler_1}
 Q_j^{n+\frac{1}{2}}-Q_j^n &= \frac{\delta}{2h^2} \left(M_{j+1}^{n+\frac{1}{2}}Q_{j+1}^{n+\frac{1}{2}}-2M_j^{n+\frac{1}{2}}Q_j^{n+\frac{1}{2}}+M_{j-1}^{n+\frac{1}{2}}Q_{j-1}^{n+\frac{1}{2}} \right) \\
@@ -160,17 +160,17 @@ Q^{n+\alpha} &= Q^n + \frac{\alpha \delta}{2}\left(\frac{\partial^2 M^{n} Q^n}{\
 Q^{n+1} &= \frac{1}{2-\alpha}\left(\frac{1}{\alpha} Q^{n+\alpha} - \frac{(1-\alpha)^2}{\alpha}Q^n + \delta(1-\alpha)\frac{\partial^2 M^{n+1} Q^{n+1}}{\partial F^2})\right)
 \end{align}
 
-The weight $\alpha$ can be chosen to match Crank-Nicolson $\alpha=\frac{1}{2}$ or to have proportional jacobians $\alpha = 2-\sqrt{2}$. The later provides optimal stability \citep{dharmaraja2009optimal}. 
+The weight $\alpha$ can be chosen to match Crank-Nicolson ($\alpha=\frac{1}{2}$) or to have proportional Jacobians ($\alpha = 2-\sqrt{2}$). The later provides optimal stability \citep{dharmaraja2009optimal}. 
 
 \subsection{Smoothing before Crank-Nicolson}
 Similarly to Rannacher idea, we could use Lawson-Morris-Gourlay for the first several timesteps in order to dampen the oscillations before applying Crank-Nicolson. This would allow to keep an overall order-2 accuracy, even with a low number of time-steps. TR-BDF2 fits particularly well as its first stage is a weighted Crank-Nicolson. So one could stop doing the BDF2 stages when the solution is sufficiently smooth. 
 
 \subsection{Optimizing for Performance}
-$M(F,T)$ need to be computed for every $F_j$ and $t_n$, $j=0,...,J+1$, $n=0,...,N-1$. The performance of the overall algorithm can be greatly improved by minimizing the calls to the \texttt{pow} and \texttt{exp} functions are those are expensive. $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ and $\rho\nu\alpha\Gamma$ are constant in time and can be thus be cached between time-steps. A further improvement is to decompose $t_{n+1}$ as $t_{n}+\delta$, then 
+The function $M(F,T)$ needs to be computed for every $F_j$ and $t_n$, $j=0,...,J+1$, $n=0,...,N-1$. The performance of the overall algorithm can be greatly improved by minimizing the calls to the \texttt{pow} and \texttt{exp} functions as those are expensive. The quantities $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ and $\rho\nu\alpha\Gamma$ are constant in time and can be thus be cached between time-steps. A further improvement is to decompose $t_{n+1}$ as $t_{n}+\delta$, then 
 \begin{equation}
 e^{\rho\nu\alpha\Gamma t_{n+1}}=e^{\rho\nu\alpha\Gamma t_n}e^{\rho\nu\alpha\Gamma \delta}
 \end{equation}
-We can therefore just compute the initial value $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ together with $e_j = e^{\rho\nu\alpha\Gamma \delta}$ for $j=0,...,J+1$ once and at each step update $M$ as:
+We can therefore just compute the initial value $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ together with $e_j = e^{\rho\nu\alpha\Gamma(F_j) \delta}$ for $j=0,...,J+1$ once, and at each step simply update $M$ as:
 \begin{equation}
 M_j^{n+1} = e_j M_j^{n} 
 \end{equation}

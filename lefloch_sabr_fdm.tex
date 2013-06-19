@@ -134,13 +134,13 @@ First stage:
 \begin{split}
 Q_j^{n+b}-Q_j^n &= \frac{b\delta}{h^2} \left(M_{j+1}^{n+b}Q_{j+1}^{n+b}-2M_j^{n+b}Q_j^{n+b}+M_{j-1}^{n+b}Q_{j-1}^{n+b} \right) \\
 Q_L^{n+b}-Q_L^n &= \frac{b\delta}{h} \left(M_{1}^{n+b}Q_{1}^{n+b}-M_0^{n+b}Q_0^{n+b}\right) \\
-Q_R^{n+b}-Q_R^n &= \frac{b\delta}{h} \left(M_{J+1}^{n+b}Q_{J+1}^{n+b}-M_J^{n+b}Q_J^{n+b}\right)
+Q_R^{n+b}-Q_R^n &= -\frac{b\delta}{h} \left(M_{J+1}^{n+b}Q_{J+1}^{n+b}-M_J^{n+b}Q_J^{n+b}\right)
 \end{split}\\
 \intertext{Second stage:}
 \begin{split}
 Q_j^{n+2b}-Q_j^{n+b} &= \frac{b\delta}{h^2} \left(M_{j+1}^{n+2b}Q_{j+1}^{n+2b}-2M_j^{n+2b}Q_j^{n+2b}+M_{j-1}^{n+2b}Q_{j-1}^{n+2b} \right) \\
 Q_L^{n+2b}-Q_L^{n+b} &= \frac{b\delta}{h} \left(M_{1}^{n+2b}Q_{1}^{n+2b}-M_0^{n+2b}Q_0^{n+2b}\right) \\
-Q_R^{n+2b}-Q_R^{n+b} &= \frac{b\delta}{h} \left(M_{J+1}^{n+2b}Q_{J+1}^{n+2b}-M_J^{n+2b}Q_J^{n+2b}\right)
+Q_R^{n+2b}-Q_R^{n+b} &= -\frac{b\delta}{h} \left(M_{J+1}^{n+2b}Q_{J+1}^{n+2b}-M_J^{n+2b}Q_J^{n+2b}\right)
 \end{split}\\
 \intertext{And finally:}
 \begin{split}

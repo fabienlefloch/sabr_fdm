@@ -244,7 +244,7 @@ We have for implicit Euler:
 \begin{eqnarray}
 Q_j^{n+1} - \frac{\delta}{h^2}\left(M_{j+1}^{n+1}Q_{j+1}^{n+1}-2M_j^{n+1}Q_j^{n+1}+M_{j-1}^{n+1}Q_{j-1}^{n+1}\right) = Q_j^n \\
 Q_L^{n+1}-Q_L^n = \frac{\delta}{h}\left(M_1^{n+1}Q_1^{n+1}-M_0^{n+1}Q_0^{n+1}\right)\\
-Q_R^{n+1}-Q_R^n = \frac{\delta}{h}\left(M_{J+1}^{n+1}Q_{J+1}^{n+1}-M_{J}^{n+1}Q_J^{n+1}\right)
+Q_R^{n+1}-Q_R^n = -\frac{\delta}{h}\left(M_{J+1}^{n+1}Q_{J+1}^{n+1}-M_{J}^{n+1}Q_J^{n+1}\right)
 \end{eqnarray}
 
 with absorbing boundary conditions
@@ -254,7 +254,7 @@ $$M_{J+1}^{n+1}Q_{J+1}^{n+1} + M_J^{n+1}Q_J^{n+1} = 0 $$
 Summing over $j$ yields:
 \begin{align}
 \sum_{j=1}^{J} h (Q_j^{n+1}-Q_j^n) &= \frac{\delta}{h}\left(M_{J+1}^{n+1}Q_{J+1}^{n+1}-M_J^{n+1}Q_J^{n+1}-M_1^{n+1}Q_1^{n+1}+M_0^{n+1}Q_0^{n+1}\right)\\
-&= -(Q_L^{n+1}-Q_L^n)+(Q_R^{n+1}-Q_R^n)
+&= -(Q_L^{n+1}-Q_L^n)-(Q_R^{n+1}-Q_R^n)
 \end{align}
 
 The total probability follows:

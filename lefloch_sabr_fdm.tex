@@ -30,10 +30,10 @@ This paper presents various finite difference schemes applied to the SABR arbitr
 \end{abstract}
 
 \section{Introduction}
-It is now well known that original SABR analytic formula from \citep{hagan2002managing} used to compute options implied volatilities is not arbitrage free. Especially, the probability density can become negative for low strikes and long maturities. Given the low rates environment we live in today, many authors have proposed various improvements to the original formula \citep{obloj2007fine, johnson2009arbitrage, paulot2009asymptotic, benaim2008arbitrage}.  A single step finite difference method is proposed in \citep{andreasen2011zabr} which leads to an arbitrage free SABR-like model. Whilst the approach from Andreasen and Huge converges for short maturities to the original SABR analytic formula, it is (deliberately) different for longer expiries, even at the money.
+It is now well known that original SABR analytic formula from \citep{hagan2002managing} used to compute options implied volatilities is not arbitrage free. Especially, the probability density can become negative for low strikes and long maturities. Given the low rates environment we live in today, many authors have proposed various improvements to the original formula \citep{obloj2008fine, johnson2009arbitrage, paulot2009asymptotic, benaim2008arbitrage}.  A single step finite difference method is proposed in \citep{andreasen2011zabr} which leads to an arbitrage free SABR-like model. Whilst the approach from Andreasen and Huge converges for short maturities to the original SABR analytic formula, it is (deliberately) different for longer expiries, even at the money.
 
 
-Hagan himself proposed a new arbitrage free SABR solution, based on a finite difference discretization of the probability density in \citep{hagan2013arbitrage}. This approach allows to stay very close to the original SABR analytic formula, well known and widely used, while being arbitrage free, and thus allows pricing with low rates. The authors use a Crank-Nicolson time-stepping, which is known to have oscillation issues \citep{GiCa2006} as it is only $A$-stable but not $L$-stable \citep{Le07}. We will show that this issue arises in the context of SABR pricing, and propose alternative schemes with increased stability. Speed and accuracy were key ingredients in popularising the original SABR formula. Given that for a 30 year cap on a 3M LIBOR, there are potentially 119 PDE to solve, we will focus our attention to performance of the proposed schemes, as well as to what extent the discretization grid can be reduced in size.
+Hagan himself proposed a new arbitrage free SABR solution, based on a finite difference discretization of the probability density in \citep{hagan2013arbitrage}. This approach allows to stay very close to the original SABR analytic formula, well known and widely used, while being arbitrage free, and thus allows pricing with low rates. The authors use a Crank-Nicolson time-stepping, which is known to have oscillation issues \citep{duffy2004critique,GiCa2006} as it is only $A$-stable but not $L$-stable \citep{Le07}. We will show that this issue arises in the context of SABR pricing, and propose alternative schemes with increased stability. Speed and accuracy were key ingredients in popularising the original SABR formula. Given that for a 30 year cap on a 3M LIBOR, there are potentially 119 PDE to solve, we will focus our attention to performance of the proposed schemes, as well as to what extent the discretization grid can be reduced in size.
 
 \section{Arbitrage Free SABR}
 In \citep{hagan2013arbitrage}, pricing in SABR with parameters $\alpha, \beta, \rho, \nu$ and forward $f$ at $T$ relies on the solution of a PDE on the probability density $Q$:
@@ -336,12 +336,12 @@ Checking the moments is very useful way to check the implementation in code.
 \begin{tabular}{|c|r|r|r|r|}
 \hline
 Scheme & h & Q(f) & QL & QR\\ \hline
-CN & 0.010050251256 & -76.222597308083 & 0.036145997780 & 0.000811969902\\
-RE & 0.010050251256 & 1.342391047522 & 0.036966009503 & 0.000850746756\\
-LMG2 & 0.010050251256 & 1.390737156096 & 0.037351038244 & 0.000808345304\\
 LMG3 & 0.010050251256 & 1.385108845032 & 0.036878097804 & 0.000775853690\\
 LS & 0.010050251256 & 1.378405046490 & 0.036466946406 & 0.000797983056\\
+LMG2 & 0.010050251256 & 1.390737156096 & 0.037351038244 & 0.000808345304\\
+RE & 0.010050251256 & 1.342391047522 & 0.036966009503 & 0.000850746756\\
 TRBDF2 & 0.010050251256 & 1.378343390764 & 0.036463543893 & 0.000797557279\\
+CN & 0.010050251256 & -76.222597308083 & 0.036145997780 & 0.000811969902\\
 \hline
 \end{tabular}
 \caption{Sample values using 500 points and 5 time-steps, $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, T=1, f=1, F_{max}=5, \delta=0.2$}

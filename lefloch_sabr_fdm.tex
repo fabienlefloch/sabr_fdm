@@ -30,7 +30,7 @@ This paper presents various finite difference schemes applied to the SABR arbitr
 \end{abstract}
 
 \section{Introduction}
-It is now well known that original SABR analytic formula from \citep{hagan2002managing} used to compute options implied volatilities is not arbitrage free as the probability density can become negative for low strikes and long maturities. Given the current low rates environment, many authors have proposed various improvements to the original formula \citep{obloj2008fine, johnson2009arbitrage, paulot2009asymptotic, benaim2008arbitrage}.  A single step finite difference method is proposed in \citep{andreasen2011zabr} which leads to an arbitrage free SABR-like model. Whilst the approach from Andreasen and Huge converges for short maturities to the original SABR analytic formula, it is (deliberately) different for longer expiries, even at the money.
+It is now well known that original SABR analytic formula from \citep{hagan2002managing} used to compute option implied volatility is not arbitrage free as the probability density can become negative for low strikes and long maturities. Given the current low rates environment, many authors have proposed various improvements to the original formula \citep{obloj2008fine, johnson2009arbitrage, paulot2009asymptotic, benaim2008arbitrage}.  A single step finite difference method is proposed in \citep{andreasen2011zabr} which leads to an arbitrage free SABR-like model. Whilst the approach from Andreasen and Huge converges for short maturities to the original SABR analytic formula, it is (deliberately) different for longer expiries, even at the money.
 
 Hagan recently proposed a new arbitrage free SABR solution, based on a finite difference discretization of the probability density in \citep{hagan2013arbitrage}. This approach provides a solution very close to the original SABR analytic formula, well known and widely used, while being arbitrage free, and thus allowing pricing with low rates. The authors use a Crank-Nicolson time-stepping scheme, which is known to have oscillation issues \citep{duffy2004critique,GiCa2006} as it is only $A$-stable but not $L$-stable \citep{Le07}. We will show that this issue arises in the context of SABR pricing, and propose alternative schemes not very well known in finance, some popular like TR-BDF2 \citep{bank1985transient,bathe2005composite,edwards2011nonlinear, flavell2013conservative} used in the semiconductor industry as well as in computational physics in general, others less popular but particularly adapted to this problem like Lawson-Swayne \citep{lawson1976simple}.  
 
@@ -55,7 +55,7 @@ z(F) &= \frac{1}{\alpha (1-\beta)}(F^{1-\beta}-f^{1-\beta}) &\text{, }
 C(F) &= F^{\beta} 
 \end{alignat}
 
-It is suggested that the lower boundary $F_{min}$ for the standard SABR model is placed at or near zero. However, the finite difference grid described in Appendix C of their paper starts at  $F_0 = F_{min} - \frac{h}{2}$, where, $h$ is the asset forward discretisation step size, potentially leading to the evaluation of functions not well-defined for negative values of $F_0$. Fortunately, only the product $M_0 Q_0$ is used in the discretisation of equation (\ref{eqn_pde}) and it is entirely defined by $M_1 Q_1$  because of the mirror-like boundary condition (imposed at the fictitious point $F_0$): 
+It is suggested that the lower boundary $F_{min}$ for the standard SABR model is placed at or near zero. However, the finite difference grid described in Appendix C of their paper starts at  $F_0 = F_{min} - \frac{h}{2}$, where, $h$ is the asset forward discretisation step size, potentially requiring the evaluation of functions not well-defined for negative values of $F_0$. Fortunately, only the product $M_0 Q_0$ is used in the discretisation of equation (\ref{eqn_pde}) and it is entirely defined by $M_1 Q_1$  because of the mirror-like boundary condition (imposed at the fictitious point $F_0$): 
 \begin{align}\label{boundary_condition}
 M_0 Q_0 + M_1 Q_1 &= 0
 \end{align}
@@ -76,7 +76,7 @@ The formula for $\Gamma$ is also undefined for $F=f$, in which case we just use 
 
 We use the same parameters as the example of negative density with the standard SABR formula in \citep{hagan2013arbitrage}: $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%$ and forward $f=1$ at $T=1$, a relatively fine discretization in the rate dimension (500 points, that is $h = 0.01005$) and large time-steps (40 steps, that is $\delta=0.025$). \cite{hagan2013arbitrage} recommend between 200 and 500 points and 30 to 100 time-steps.
 
-Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the forward. To guarantee the absence of oscillations, the \emph{Courant number}  should be small enough $\Psi = M \frac{\delta}{h^2}\leq 1$ (Theorem 2.2 in \cite{morton2005numerical}). This corresponds directly to the stability of the explicit Euler part of Crank-Nicolson. In practice, a higher value is acceptable because of a slight damping in Crank-Nicolson \citep{lawson1978extrapolation}. $M$ depends on $F$, but we can use the at-the-money value at $f$, as the spike is located at-the-money; that is, 
+Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the forward. To guarantee the absence of oscillations, the \emph{Courant number}  should be small enough $\Psi = M \frac{\delta}{h^2}\leq 1$ (Theorem 2.2 in \cite{morton2005numerical}). This corresponds directly to the stability of the explicit Euler part of Crank-Nicolson. In practice, a higher value is acceptable because of a slight damping in Crank-Nicolson \citep{lawson1978extrapolation}. However, $M$ depends on $F$, but we can use the at-the-money value at $f$, as the spike is located there; that is, 
 \begin{align}
 \Psi &= \frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) f^{2\beta} \frac{\delta}{h^2}
 \end{align} 
@@ -168,7 +168,7 @@ The weight $\alpha$ can be chosen to match Crank-Nicolson ($\alpha=\frac{1}{2}$)
 \subsection{Smoothing before Crank-Nicolson}
 Similarly to Rannacher idea, we could use Lawson-Morris-Gourlay for the first few timesteps in order to dampen the oscillations before applying Crank-Nicolson. This ensures an overall order-2 accuracy, even with a low number of time-steps. TR-BDF2 fits particularly well as it's first stage is a weighted Crank-Nicolson. So one could stop doing the BDF2 stages when the solution is sufficiently smooth. 
 
-\subsection{Optimizing for Performance}
+\subsection{Optimising for Performance}
 The function $M(F,T)$ needs to be computed for every grid point $\left(F_j, t_n\right)$. The performance of the overall algorithm can be greatly improved by minimizing the calls to the \texttt{pow} and \texttt{exp} functions as those are expensive. The quantities $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ and $\rho\nu\alpha\Gamma$ are constant in time and can be thus be cached between time-steps. A further improvement is to decompose $t_{n+1}$ as $t_{n}+\delta$, then 
 \begin{equation}
 e^{\rho\nu\alpha\Gamma t_{n+1}}=e^{\rho\nu\alpha\Gamma t_n}e^{\rho\nu\alpha\Gamma \delta}
@@ -234,7 +234,7 @@ We consider the SABR parameters used in \citep{andreasen2011zabr}: $\alpha=0.087
 
 Only 2 time-steps are enough with  LMG3 for good accuracy, and 5 for LMG2, LS, RAN and TR-BDF2. 
 \section{Conclusion}
-It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. Depending on the SABR parameters, other schemes, like TR-BDF2 or Lawson-Swayne can be even more efficient.
+It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. Other schemes such as TR-BDF2 or Lawson-Swayne can be even more efficient.
 This makes \citep{hagan2013arbitrage} particularly competitive to the one step finite difference approach of \citep{andreasen2011zabr}.
 \bibliographystyle{rAMF}
 %\bibliographystyle{ieeetr}
@@ -308,7 +308,7 @@ in which case, since we already confirmed that total probability was preserved a
 &=& (2-\alpha)
 \end{eqnarray}
 
-Now recall that our grid has even spacing, and so $F_{j+1}-2F_j+F_j=0$, then
+Now recall that our grid has even spacing, and so $F_{j+1}-2F_j+F_j=0$. Then
 
 \begin{eqnarray}
 & &h\sum_{j=1}^J F_j\left[(2-\alpha)Q_j^{n+1}-\frac{1}{\alpha}Q_j^{n+\alpha}+\frac{(1-\alpha)^2}{\alpha}Q_j^n\right]\\
@@ -316,7 +316,7 @@ Now recall that our grid has even spacing, and so $F_{j+1}-2F_j+F_j=0$, then
 & &+ (1-\alpha)\frac{\delta}{h}\left(F_1M_{0}^{n+1}Q_{0}^{n+1}-F_{0}M_1^{n+1}Q_1^{n+1}\right)
 \end{eqnarray}
 
-then, recalling that $F_{min}=\frac{1}{2}(F_0+F_1)$ and $F_{max}=\frac{1}{2}(F_J+F_{J+1})$ and $F_1-F_0=F_{J+1}-F_{J}=h$, 
+Furthermore, recalling that $F_{min}=\frac{1}{2}(F_0+F_1)$ and $F_{max}=\frac{1}{2}(F_J+F_{J+1})$ and $F_1-F_0=F_{J+1}-F_{J}=h$, 
 
 \begin{eqnarray}
 & &F_{min}\left[(2-\alpha)Q_L^{n+1}-\frac{1}{\alpha}Q_L^{n+\alpha}+\frac{(1-\alpha)^2}{\alpha}Q_L^n\right]\\
@@ -350,7 +350,7 @@ LS & 0.010050251256 & 1.378405046490 & 0.036466946406 & 0.000797983056\\
 TRBDF2 & 0.010050251256 & 1.378343390764 & 0.036463543893 & 0.000797557279\\
 \hline
 \end{tabular}
-\caption{Sample values using 500 points and 5 time-steps, $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, T=1, f=1, F_{max}=5, \delta=0.2$}
+\caption{Sample values using 500 points and 5 time-steps, $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, T=1, f=1, F_min=0.0, F_{max}\approx 5, \delta=0.2$}
 \end{center}
 \end{table} 
 

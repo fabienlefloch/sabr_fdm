@@ -165,6 +165,8 @@ Q^{n+1} &= \frac{1}{2-\alpha}\left(\frac{1}{\alpha} Q^{n+\alpha} - \frac{(1-\alp
 
 The weight $\alpha$ can be chosen to match Crank-Nicolson ($\alpha=\frac{1}{2}$) or to have proportional Jacobians ($\alpha = 2-\sqrt{2}$). The later provides optimal stability \citep{dharmaraja2009optimal}. 
 
+Bathe extends the method to three-stages, using 2 stages of the trapezoidal rule and 1 stage of third order backward difference scheme (BDF3) in \citep{bathe2005composite}.
+
 \subsection{Smoothing before Crank-Nicolson}
 Similarly to Rannacher idea, we could use Lawson-Morris-Gourlay for the first few timesteps in order to dampen the oscillations before applying Crank-Nicolson. This ensures an overall order-2 accuracy, even with a low number of time-steps. TR-BDF2 fits particularly well as it's first stage is a weighted Crank-Nicolson. So one could stop doing the BDF2 stages when the solution is sufficiently smooth. 
 
@@ -308,7 +310,7 @@ in which case, since we already confirmed that total probability was preserved a
 &=& (2-\alpha)
 \end{eqnarray}
 
-Now recall that our grid has even spacing, and so $F_{j+1}-2F_j+F_j=0$. Then
+Now recall that our grid has even spacing, and so $F_{j+1}-2F_j+F_{j-1}=0$. Then
 
 \begin{eqnarray}
 & &h\sum_{j=1}^J F_j\left[(2-\alpha)Q_j^{n+1}-\frac{1}{\alpha}Q_j^{n+\alpha}+\frac{(1-\alpha)^2}{\alpha}Q_j^n\right]\\

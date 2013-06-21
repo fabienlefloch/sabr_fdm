@@ -135,13 +135,13 @@ qplot(Time, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="
 ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_density_ah_500_time.eps",width=6,height=4)
 
 #perf vol 500
-M<-read.table('/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_vol_hagan_500.txt', header=TRUE)
+M<-read.table('/home/fabien/mypapers/sabr_fdm/perf_vol_hagan_500.txt', header=TRUE)
 
 qplot(TimeSteps, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Volatility Max Error", xlab="Number of time steps")+scale_y_log10()+scale_x_log10()
-ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_vol_hagan_500_steps.eps",width=5,height=4)
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_vol_hagan_500_steps.eps",width=5,height=4)
 
 qplot(Time, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Volatility Max Error", xlab="time")+scale_y_log10()+scale_x_log10()
-ggsave(file="/home/fabien/scala-workspace/quantscale/doc/lefloch_sabr_fdm/perf_vol_hagan_500_time.eps",width=5,height=4)
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_vol_hagan_500_time.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/perf_vol_ah_500_full.txt', header=TRUE)
 

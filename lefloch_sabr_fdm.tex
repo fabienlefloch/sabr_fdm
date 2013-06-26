@@ -114,6 +114,7 @@ Q(F) &= 2 \hat{Q}^{\frac{\delta}{2}}(F) - \hat{Q}^{\delta}(F) \\
 Q_L &= 2 \hat{Q}^{\frac{\delta}{2}}_L - \hat{Q}^{\delta}_L\\
 Q_R &= 2 \hat{Q}^{\frac{\delta}{2}}_R - \hat{Q}^{\delta}_R
 \end{align}
+
 where $\hat{Q}^{\delta}$ is $Q$ computed by implicit Euler with a time step of $\delta$.
 
 
@@ -122,17 +123,20 @@ A local Richardson extrapolation in time of second and third order is proposed i
 
 For the second order scheme, at each time-step, equation (\ref{eqn_richardson}) is applied.
 For the third order scheme, at each time-step we apply:
+%\begin{subequations}
 \begin{align}\label{eqn_lmg3}
 Q(F) &= 4.5 \hat{Q}^{\frac{\delta}{3}}(F) - 4.5 \hat{Q}^{\frac{2\delta}{3}}(F)  + \hat{Q}^{\delta}(F)\\
 Q_L &= 4.5 \hat{Q}^{\frac{\delta}{3}}_L - 4.5 \hat{Q}^{\frac{2\delta}{3}}_L  + \hat{Q}^{\delta}_L\\
 Q_R &= 4.5 \hat{Q}^{\frac{\delta}{3}}_R - 4.5 \hat{Q}^{\frac{2\delta}{3}}_R  + \hat{Q}^{\delta}_R
 \end{align}
+%\end{subequations}
 where $\hat{Q}^{\frac{\delta}{3}}$ is $Q$ computed by implicit Euler with 3 time steps of $\frac{\delta}{3}$ and $\hat{Q}^{\frac{2\delta}{3}}$ is $Q$ computed by implicit Euler with a time step of $\frac{2\delta}{3}$ and $\frac{\delta}{3}$. Being linear combinations of implicit Euler, those schemes are moment preserving.
 
 \subsection{Lawson-Swayne}
 A slightly faster second order unconditionally stable scheme is presented as a remedy to Crank-Nicolson in \citep{lawson1976simple, lawson1978extrapolation}. Let $b=1-\frac{\sqrt{2}}{2}$, it consists in applying two implicit Euler steps with time-step of $b\delta$ and an extrapolation on the values at those two steps.\\
 \\
 First stage:
+\begin{subequations}
 \begin{align}\label{eqn_lawson_swayne}
 \begin{split}
 Q_j^{n+b}-Q_j^n &= \frac{b\delta}{h^2} \left(M_{j+1}^{n+b}Q_{j+1}^{n+b}-2M_j^{n+b}Q_j^{n+b}+M_{j-1}^{n+b}Q_{j-1}^{n+b} \right) \\
@@ -152,23 +156,33 @@ Q_L^{n+1} &= (\sqrt{2}+1) Q_L^{n+2b} - \sqrt{2} Q_L^{n+b}\\
 Q_R^{n+1} &= (\sqrt{2}+1)  Q_R^{n+2b} - \sqrt{2} Q_R^{n+b}
 \end{split}
 \end{align}
+\end{subequations}
 for $j=1,...,J$ and $n=0,...,N-1$.
 
 The scheme is moment preserving as it can also be seen as a linear combination of implicit Euler schemes.
 
 \subsection{TR-BDF2}
 TR-BDF2 is a two-stage method where the first stage consists in applying the (weighted) trapezoidal rule (Crank-Nicolson) and the second stage consists in applying the second order backward difference scheme (BDF2) on the first stage result and the first stage initial input \citep{bank1985transient, Le07}. It is second order accurate in time and $L$-stable. It is not to be confused with the simpler multistep method BDF2: the full step only depends on the previous full step while BDF2 depends on the two previous timesteps and can lose its accuracy \citep{windcliff2001shout} with variable timesteps and linear complimentary problems. This scheme does not suffer from such drawbacks. The scheme has been applied to finance in the context of American option pricing \citep{floc2013tr}.
+\begin{subequations}
 \begin{align}
 Q^{n+\alpha} &= Q^n + \frac{\alpha \delta}{2}\left(\frac{\partial^2 M^{n} Q^n}{\partial F^2}+\frac{\partial^2 M^{n+\alpha} Q^{n+\alpha}}{\partial F^2}\right)\\
 Q^{n+1} &= \frac{1}{2-\alpha}\left(\frac{1}{\alpha} Q^{n+\alpha} - \frac{(1-\alpha)^2}{\alpha}Q^n + \delta(1-\alpha)\frac{\partial^2 M^{n+1} Q^{n+1}}{\partial F^2}\right)
 \end{align}
+\end{subequations}
 
 The weight $\alpha$ can be chosen to match Crank-Nicolson ($\alpha=\frac{1}{2}$) or to have proportional Jacobians ($\alpha = 2-\sqrt{2}$). The later provides optimal stability \citep{dharmaraja2009optimal}. 
 
-Bathe extends the method to three-stages, using 2 stages of the trapezoidal rule and 1 stage of third order backward difference scheme (BDF3) in \citep{bathe2005composite}.
+This can be extended to three-stages, with two stages of the trapezoidal rule and one stage of third order backward difference scheme (BDF3) as in \citep{bathe2005composite}, resulting in a method with even stronger damping properties:
+\begin{subequations}
+\begin{align}
+Q^{n+\frac{1}{3}} &= Q^n + \frac{\delta}{6}\left(\frac{\partial^2 M^{n} Q^n}{\partial F^2}+\frac{\partial^2 M^{n+\frac{1}{3}} Q^{n+\frac{1}{3}}}{\partial F^2}\right)\\
+Q^{n+\frac{2}{3}} &= Q^n + \frac{\delta}{6}\left(\frac{\partial^2 M^{n+\frac{1}{3}} Q^{n+\frac{1}{3}}}{\partial F^2}+\frac{\partial^2 M^{n+\frac{2}{3}} Q^{n+\frac{2}{3}}}{\partial F^2}\right)\\
+Q^{n+1} &= \frac{1}{11}\left( 18 Q^{n+\frac{2}{3}} - 9Q^{n+\frac{1}{3}} + 2Q^n + 2\delta\frac{\partial^2 M^{n+1} Q^{n+1}}{\partial F^2}\right)
+\end{align}
+\end{subequations}
 
 \subsection{Smoothing before Crank-Nicolson}
-Similarly to Rannacher idea, we could use Lawson-Morris-Gourlay for the first few timesteps in order to dampen the oscillations before applying Crank-Nicolson. This ensures an overall order-2 accuracy, even with a low number of time-steps. TR-BDF2 fits particularly well as it's first stage is a weighted Crank-Nicolson. So one could stop doing the BDF2 stages when the solution is sufficiently smooth. 
+Similarly to Rannacher idea, we could use Lawson-Morris-Gourlay for the first few timesteps in order to dampen the oscillations before applying Crank-Nicolson. This ensures an overall order-2 accuracy, even with a low number of time-steps. TR-BDF2 and TR-BDF3 fit particularly well as the first stages are a weighted Crank-Nicolson. So one could stop doing the BDF2 (respectively BDF3) stages when the solution is sufficiently smooth. 
 
 \subsection{Optimising for Performance}
 The function $M(F,T)$ needs to be computed for every grid point $\left(F_j, t_n\right)$. The performance of the overall algorithm can be greatly improved by minimizing the calls to the \texttt{pow} and \texttt{exp} functions as those are expensive. The quantities $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ and $\rho\nu\alpha\Gamma$ are constant in time and can be thus be cached between time-steps. A further improvement is to decompose $t_{n+1}$ as $t_{n}+\delta$, then 
@@ -235,9 +249,12 @@ We consider the SABR parameters used in \citep{andreasen2011zabr}: $\alpha=0.087
 %show convergence graph
 
 Only 2 time-steps are enough with  LMG3 for good accuracy, and 5 for LMG2, LS, RAN and TR-BDF2. 
+
 \section{Conclusion}
 It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. Other schemes such as TR-BDF2 or Lawson-Swayne can be even more efficient.
 This makes \citep{hagan2013arbitrage} particularly competitive to the one step finite difference approach of \citep{andreasen2011zabr}.
+
+In general, our experiments show that TR-BDF2 and Lawson-Swayne are robust and have similar stability and convergence properties. We did find in many experiments that Crank-Nicolson, dampened by 4 initial steps of TR-BDF2 or Lawson-Swayne, can be even more efficient, but we are less comfortable using such a hybrid scheme without further analysis.
 \bibliographystyle{rAMF}
 %\bibliographystyle{ieeetr}
 \bibliography{lefloch_sabr_fdm}
@@ -334,6 +351,7 @@ $$(2-\alpha)\left[F_{min}Q_L^{n+1} + h\sum_{j=1}^J F_jQ_j^{n+1} +F_{max}Q_R^{n+1
 and so the forward is preserved by BDF2 at $t_{n+1}$.
 
 
+
 \section{Reference Implementation Values}
 Checking the moments at every step is very useful way to validate a scheme's implementation in code. To support further validation we recorded specific values from our implementations as reference. The TR-BDF2 is using a value of $\alpha=2-\sqrt{2}$ whilst the RAN scheme is using Rannacher time-stepping for the first two full time-steps.
 
@@ -342,18 +360,34 @@ Checking the moments at every step is very useful way to validate a scheme's imp
 \begin{center}
 \begin{tabular}{|c|r|r|r|r|}
 \hline
-Scheme & $h$ & $Q(f)$ & $Q_L$ & $Q_R$\\ \hline
-CN & 0.010050251256 & -76.222597308083 & 0.036145997780 & 0.000811969902\\
-RAN & 0.010050251256 & 1.390318228263 & 0.037030534101 & 0.001026159943\\
-RE & 0.010050251256 & 1.342391047522 & 0.036966009503 & 0.000850746756\\
-LMG2 & 0.010050251256 & 1.390737156096 & 0.037351038244 & 0.000808345304\\
-LMG3 & 0.010050251256 & 1.385108845032 & 0.036878097804 & 0.000775853690\\
-LS & 0.010050251256 & 1.378405046490 & 0.036466946406 & 0.000797983056\\
-TRBDF2 & 0.010050251256 & 1.378343390764 & 0.036463543893 & 0.000797557279\\
+Scheme & ATM price & Q(f) & QL & QR\\
+CN & 0.155491886707 & -76.222597308083 & 0.036145997780 & 0.000811969902\\
+RAN & 0.149165623132 & 1.390318228263 & 0.037030534101 & 0.001026159943\\
+RE & 0.150061501089 & 1.342391047522 & 0.036966009503 & 0.000850746756\\
+LMG2 & 0.149448704254 & 1.390737156096 & 0.037351038244 & 0.000808345304\\
+LMG3 & 0.149595211756 & 1.385108845032 & 0.036878097804 & 0.000775853690\\
+LS & 0.149701563313 & 1.378405046490 & 0.036466946406 & 0.000797983056\\
+TRBDF2 & 0.149703134940 & 1.378343390764 & 0.036463543893 & 0.000797557279\\
+TRBDF3 & 0.149630615131 & 1.390034574220 & 0.036719878912 & 0.000785705142\\
 \hline
 \end{tabular}
-\caption{Sample values using 500 points and 5 time-steps, $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, T=1, f=1, F_{min}=0.0, F_{max}\approx 5, \delta=0.2$}
+\caption{Sample values using 500 points and 5 time-steps, $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, T=1, f=1, F_{min}=0.0, F_{max}\approx 5, \delta=0.2, h=0.010050251256$}
 \end{center}
 \end{table} 
+
+%\section{TR-BDF2 vs TR-BDF3}
+%\subsection{First 4 steps}
+%\begin{figure}[htb]
+%  \begin{center}  
+%  \subfigure[TR-BDF2]{\label{fig:density_hagan_trbdf2_500_5_5}
+%  \includegraphics[width=7cm]{density_hagan_trbdf2_500_5_5.eps}}
+%  \subfigure[TR-BDF3]{\label{fig:density_hagan_trbdf3_500_5_5}
+%\includegraphics[width=7cm]{density_hagan_trbdf3_500_5.eps}}
+%   \end{center}
+%     \caption{Probability density in Hagan PDE using a total of 5 time-steps for the first 4 steps}
+%\end{figure}
+%
+%\subsection{Convergence and Performance}
+
 
 \end{document}

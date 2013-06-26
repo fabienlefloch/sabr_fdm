@@ -32,14 +32,14 @@ This paper presents various finite difference schemes applied to the SABR arbitr
 \section{Introduction}
 It is now well known that original SABR analytic formula from \citep{hagan2002managing} used to compute option implied volatility is not arbitrage free as the probability density can become negative for low strikes and long maturities. Given the current low rates environment, many authors have proposed various improvements to the original formula \citep{obloj2008fine, johnson2009arbitrage, paulot2009asymptotic, benaim2008arbitrage}.  A single step finite difference method is proposed in \citep{andreasen2011zabr} which leads to an arbitrage free `SABR-like' model. Whilst the approach from Andreasen and Huge converges for short maturities to the original SABR analytic formula, it is (deliberately) different for longer expiries, even at the money.
 
-Hagan recently proposed a new arbitrage free SABR solution, based on a finite difference discretization of the probability density in \citep{hagan2013arbitrage}. This approach provides a solution very close to the original SABR analytic formula, well known and widely used, while being arbitrage free, and thus allowing pricing with low rates. The authors use a Crank-Nicolson time-stepping scheme, which is known to have oscillation issues \citep{duffy2004critique,GiCa2006} as it is only $A$-stable but not $L$-stable \citep{Le07}. We will show that this issue arises in the context of SABR pricing, and propose alternative schemes that are not very well known in computational finance, and yet are effective on this problem. One such scheme is TR-BDF2, used in the semiconductor industry as well as more generally in computational physics \citep{bank1985transient,bathe2005composite,edwards2011nonlinear, flavell2013conservative}. Another scheme is due to Lawson and Swayne; whilst somewhat obscure, it is simple and effective on this problem \citep{lawson1976simple}.  
+Hagan recently proposed a new arbitrage free SABR solution, based on a finite difference discretisation of the probability density in \citep{hagan2013arbitrage}. This approach provides a solution very close to the original SABR analytic formula, well known and widely used, while being arbitrage free, and thus allowing pricing with low rates. The authors use a Crank-Nicolson time-stepping scheme, which is known to have oscillation issues \citep{duffy2004critique,GiCa2006} as it is only $A$-stable but not $L$-stable \citep{Le07}. We will show that this issue arises in the context of SABR pricing, and propose alternative schemes that are not very well known in computational finance, and yet are effective on this problem. One such scheme is TR-BDF2, used in the semiconductor industry as well as more generally in computational physics \citep{bank1985transient,bathe2005composite,edwards2011nonlinear, flavell2013conservative}. Another scheme is due to Lawson and Swayne; whilst somewhat obscure, it is simple and effective on this problem \citep{lawson1976simple}.  
 
 Speed and accuracy were key ingredients in popularising the original SABR formula. Given that for a 30 year cap on a 3M LIBOR, there are potentially 119 PDEs to solve, we will focus our attention on the performance of the proposed schemes, as well as to what extent the discretisation grid can be reduced in size.
 
 
 
 \section{Arbitrage Free SABR}
-In \citep{hagan2013arbitrage}, pricing in SABR with parameters $\alpha, \beta, \rho, \nu$ and forward $f$ at $T$ relies on the solution of a PDE on the probability density $Q$:
+In \citep{hagan2013arbitrage}, pricing with SABR parameters $\alpha, \beta, \rho, \nu$ and forward $f$ at $\tau_{ex}$ relies on the solution of a PDE on the probability density $Q$:
 
 \begin{align}\label{eqn_pde}
 \frac{\partial Q}{\partial T}(T,F) = \frac{\partial^2 M(T,F) Q(T,F)}{\partial F^2} \text{ and } \begin{cases}
@@ -71,12 +71,12 @@ The formula for $\Gamma$ is also undefined for $F=f$, in which case we just use 
   \begin{center}  
     \includegraphics[width=12cm]{density_hagan_cn_500_40.eps}
   \end{center}
-     \caption{\label{fig:density_hagan_cn_500_40} Probability density in Hagan PDE discretized with Crank-Nicolson with 500 points and 40 time-steps. $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, T=1$}
+     \caption{\label{fig:density_hagan_cn_500_40} Probability density in Hagan PDE discretised with Crank-Nicolson with 500 points and 40 time-steps. $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, \tau_{ex}=1$}
 \end{figure}
 
-We use the same parameters as the example of negative density with the standard SABR formula in \citep{hagan2013arbitrage}: $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%$ and forward $f=1$ at $T=1$, a relatively fine discretization in the rate dimension (500 points, that is $h = 0.01005$) and large time-steps (40 steps, that is $\delta=0.025$). \cite{hagan2013arbitrage} recommend between 200 and 500 points and 30 to 100 time-steps.
+We use the same parameters as the example of negative density with the standard SABR formula in \citep{hagan2013arbitrage}: $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%$ and forward $f=1$ at $T=1$, a relatively fine discretisation in the rate dimension (500 points, that is $h = 0.01005$) and large time-steps (40 steps, that is $\delta=0.025$). \cite{hagan2013arbitrage} recommend between 200 and 500 points and 30 to 100 time-steps.
 
-Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the forward. To guarantee the absence of oscillations, the \emph{Courant number}  should be small enough $\Psi = M \frac{\delta}{h^2}\leq 1$ (Theorem 2.2 in \cite{morton2005numerical}). This corresponds directly to the stability of the explicit Euler part of Crank-Nicolson. In practice, a higher value is acceptable because of a slight damping in Crank-Nicolson \citep{lawson1978extrapolation}. However, $M$ depends on $F$, but we can use the at-the-money value at $f$, as the spike is located there; that is, 
+Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the forward. To guarantee the absence of oscillations, the \emph{Courant number}  should be small enough $\Psi = M \frac{\delta}{h^2}\leq 1$ (Theorem 2.2 in \cite{morton2005numerical}). This corresponds directly to the stability of the explicit Euler part of Crank-Nicolson. In practice, a higher value is acceptable because of a slight damping in Crank-Nicolson \citep{lawson1978extrapolation}. Although, $M$ depends on $F$, we can use the at-the-money value at $f$, as the spike is located there; that is, 
 \begin{align}
 \Psi &= \frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) f^{2\beta} \frac{\delta}{h^2}
 \end{align} 
@@ -88,7 +88,7 @@ Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the fo
   \subfigure[with 1280 time steps $\Psi = 0.47$]{\label{fig:density_hagan_cn_500_1280_5}
 \includegraphics[width=7cm]{density_hagan_cn_500_1280_5.eps}}
   \end{center}
-     \caption{\label{fig:density_hagan_500_40_5} First 4 time steps of the probability density in Hagan PDE discretized with Crank-Nicolson}
+     \caption{\label{fig:density_hagan_500_40_5} First 4 time steps of the probability density in Hagan PDE discretised with Crank-Nicolson}
 \end{figure}
 
 In our example, in Figures \ref{fig:density_hagan_cn_500_40} and \ref{fig:density_hagan_cn_500_40_5} $\Psi \approx 15$ while Figure \ref{fig:density_hagan_cn_500_1280_5} shows that indeed when $\Psi < 1$ there are no oscillations. In the next sections it is shown that a much smaller number of time steps can be used with other finite difference time-stepping techniques whilst still preserving good accuracy.
@@ -108,7 +108,7 @@ Q_R^{n+\frac{1}{2}}-Q_R^n &= -\frac{\delta}{2h} \left(M_{J+1}^{n+\frac{1}{2}}Q_{
 for $j=1,...,J$ and $n=0,\frac{1}{2}, 1, \frac{3}{2}$.
 
 \subsection{Implicit Richardson Extrapolation}
-A simple Richardson extrapolation in time \citep{richardson1911approximate} on implicit Euler will also provide a nearly order-2 scheme in time, keeping strong damping properties of the implicit Euler scheme at the cost of increased computational load: the implicit Euler scheme (Equations \ref{eqn_euler_1}, \ref{eqn_euler_2}) is evaluated with $\frac{\delta}{2}$ and $\delta$. In practice it is around twice as slow as Crank-Nicolson. At $t_N=T$, we apply:
+A simple Richardson extrapolation in time \citep{richardson1911approximate} on implicit Euler will also provide a nearly order-2 scheme in time, keeping strong damping properties of the implicit Euler scheme at the cost of increased computational load: the implicit Euler scheme (Equations \ref{eqn_euler_1}, \ref{eqn_euler_2}) is evaluated with $\frac{\delta}{2}$ and $\delta$. In practice it is around twice as slow as Crank-Nicolson. At $T=N\delta=\tau_{ex}$, we apply:
 \begin{align}\label{eqn_richardson}
 Q(F) &= 2 \hat{Q}^{\frac{\delta}{2}}(F) - \hat{Q}^{\delta}(F) \\
 Q_L &= 2 \hat{Q}^{\frac{\delta}{2}}_L - \hat{Q}^{\delta}_L\\
@@ -213,7 +213,7 @@ For multi-stage schemes, it is also possible to consider $M$ as piecewise consta
      \caption{\label{fig:density_hagan_lmg2_500_10} Probability density in Hagan PDE using a total of 5 time-steps}
 \end{figure}
 With the same parameters as in section \ref{section_cn}, Figure \ref{fig:density_hagan_ran_500_5_0} shows a smooth positive probability density using only a total of 5 time-steps when Rannacher smoothing is applied to Crank-Nicolson. The density computed using second or third order Lawson-Morris-Gourlay (LMG2, LMG3), Lawson-Swayne (LS), TR-BDF2 or Richardson extrapolation on implicit Euler would look very similar. Figures \ref{fig:density_hagan_ran_500_5_5} and \ref{fig:density_hagan_lmg3_500_5_5} show no apparent oscillations in the first steps.
-In contrast, Crank-Nicolson had strong oscillations visible at $t_N=T$ with 40 time steps.
+In contrast, Crank-Nicolson had strong oscillations visible at $T=\tau_{ex}$ with 40 time steps.
 
 \subsection{Performance}
 \subsubsection{Hagan Example}
@@ -233,7 +233,7 @@ With the same parameters as in section \ref{section_cn}, we look at the maximum 
 Other tests we performed indicate that the implied volatility maximum error or even the at-the-money implied volatility error would lead to similar conclusions. Furthermore, a Black implied volatility with an absolute error under 0.1\% was achieved with only 2 time steps for LMG3, Lawson-Swayne and TR-BDF2, 5 time steps for LMG2, and 10 steps for RAN. Lawson-Swayne is the most efficient scheme on this problem, closely followed by TR-BDF2, Rannacher and LMG3.
 
 \subsubsection{Andreasen-Huge Example}
-We consider the SABR parameters used in \citep{andreasen2011zabr}: $\alpha=0.0873, \beta=0.7, \rho=-0.48, \nu=0.47$ with a forward of $f=0.025$ and a maturity $T=10.0$ and look at the maximum error in implied volatility between $0.2f$ and $2f$.
+We consider the SABR parameters used in \citep{andreasen2011zabr}: $\alpha=0.0873, \beta=0.7, \rho=-0.48, \nu=0.47$ with a forward of $f=0.025$ and a maturity $\tau_{ex}=10.0$ and look at the maximum error in implied volatility between $0.2f$ and $2f$.
 
 \begin{figure}[htb]
   \begin{center}  
@@ -252,9 +252,11 @@ Only 2 time-steps are enough with  LMG3 for good accuracy, and 5 for LMG2, LS, R
 
 \section{Conclusion}
 It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. Other schemes such as TR-BDF2 or Lawson-Swayne can be even more efficient.
-This makes \citep{hagan2013arbitrage} particularly competitive to the one step finite difference approach of \citep{andreasen2011zabr}.
 
-In general, our experiments show that TR-BDF2 and Lawson-Swayne are robust and have similar stability and convergence properties. We did find in many experiments that Crank-Nicolson, dampened by 4 initial steps of TR-BDF2 or Lawson-Swayne, can be even more efficient, but we are less comfortable using such a hybrid scheme without further analysis.
+In general, our experiments showed that TR-BDF2 and Lawson-Swayne are robust and have similar stability and convergence properties. We did find in many experiments that Crank-Nicolson, dampened by 4 initial steps of TR-BDF2 or Lawson-Swayne, can be even more efficient, but we are less comfortable recommending such a hybrid scheme without further analysis.
+
+Thus, with a careful choice of finite difference scheme, \citep{hagan2013arbitrage} is particularly competitive to the one step finite difference approach of \citep{andreasen2011zabr}.
+
 \bibliographystyle{rAMF}
 %\bibliographystyle{ieeetr}
 \bibliography{lefloch_sabr_fdm}

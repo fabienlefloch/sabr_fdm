@@ -74,7 +74,7 @@ The formula for $\Gamma$ is also undefined for $F=f$, in which case we just use 
      \caption{\label{fig:density_hagan_cn_500_40} Probability density in Hagan PDE discretised with Crank-Nicolson with 500 points and 40 time-steps. $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, \tau_{ex}=1$}
 \end{figure}
 
-We use the same parameters as the example of negative density with the standard SABR formula in \citep{hagan2013arbitrage}: $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%$ and forward $f=1$ at $T=1$, a relatively fine discretisation in the rate dimension (500 points, that is $h = 0.01005$) and large time-steps (40 steps, that is $\delta=0.025$). \cite{hagan2013arbitrage} recommend between 200 and 500 points and 30 to 100 time-steps.
+We use the same parameters as the example of negative density with the standard SABR formula in \citep{hagan2013arbitrage}: $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%$ and forward $f=1$ at $\tau_{ex}=1$, a relatively fine discretisation in the rate dimension (500 points, that is $h = 0.01005$) and large time-steps (40 steps, that is $\delta=0.025$). \cite{hagan2013arbitrage} recommend between 200 and 500 points and 30 to 100 time-steps.
 
 Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the forward. To guarantee the absence of oscillations, the \emph{Courant number}  should be small enough $\Psi = M \frac{\delta}{h^2}\leq 1$ (Theorem 2.2 in \cite{morton2005numerical}). This corresponds directly to the stability of the explicit Euler part of Crank-Nicolson. In practice, a higher value is acceptable because of a slight damping in Crank-Nicolson \citep{lawson1978extrapolation}. Although, $M$ depends on $F$, we can use the at-the-money value at $f$, as the spike is located there; that is, 
 \begin{align}
@@ -184,8 +184,10 @@ Q^{n+1} &= \frac{1}{11}\left( 18 Q^{n+\frac{2}{3}} - 9Q^{n+\frac{1}{3}} + 2Q^n +
 \subsection{Smoothing before Crank-Nicolson}
 Similarly to Rannacher idea, we could use Lawson-Morris-Gourlay for the first few timesteps in order to dampen the oscillations before applying Crank-Nicolson. This ensures an overall order-2 accuracy, even with a low number of time-steps. TR-BDF2 and TR-BDF3 fit particularly well as the first stages are a weighted Crank-Nicolson. So one could stop doing the BDF2 (respectively BDF3) stages when the solution is sufficiently smooth. 
 
+We found by experimentation that Crank-Nicolson, dampened by 4 initial steps of TR-BDF2 or Lawson-Swayne was very efficient, but we are less comfortable recommending such a hybrid scheme without further analysis.
+
 \subsection{Optimising for Performance}
-The function $M(F,T)$ needs to be computed for every grid point $\left(F_j, t_n\right)$. The performance of the overall algorithm can be greatly improved by minimizing the calls to the \texttt{pow} and \texttt{exp} functions as those are expensive. The quantities $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ and $\rho\nu\alpha\Gamma$ are constant in time and can be thus be cached between time-steps. A further improvement is to decompose $t_{n+1}$ as $t_{n}+\delta$, then 
+The function $M(F,T)$ needs to be computed for every grid point $\left(F_j, t_n\right)$. The performance of the overall algorithm can be greatly improved by minimising the calls to the \texttt{pow} and \texttt{exp} functions as those are expensive. The quantities $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ and $\rho\nu\alpha\Gamma$ are constant in time and can be thus be cached between time-steps. A further improvement is to decompose $t_{n+1}$ as $t_{n}+\delta$, then 
 \begin{equation}
 e^{\rho\nu\alpha\Gamma t_{n+1}}=e^{\rho\nu\alpha\Gamma t_n}e^{\rho\nu\alpha\Gamma \delta}
 \end{equation}
@@ -251,9 +253,8 @@ We consider the SABR parameters used in \citep{andreasen2011zabr}: $\alpha=0.087
 Only 2 time-steps are enough with  LMG3 for good accuracy, and 5 for LMG2, LS, RAN and TR-BDF2. 
 
 \section{Conclusion}
-It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. Other schemes such as TR-BDF2 or Lawson-Swayne can be even more efficient.
+It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. Other schemes such as TR-BDF2 or Lawson-Swayne can be even more efficient. In our experiments TR-BDF2 and Lawson-Swayne were robust and had similar stability and convergence properties.
 
-In general, our experiments showed that TR-BDF2 and Lawson-Swayne are robust and have similar stability and convergence properties. We did find in many experiments that Crank-Nicolson, dampened by 4 initial steps of TR-BDF2 or Lawson-Swayne, can be even more efficient, but we are less comfortable recommending such a hybrid scheme without further analysis.
 
 Thus, with a careful choice of finite difference scheme, \citep{hagan2013arbitrage} is particularly competitive to the one step finite difference approach of \citep{andreasen2011zabr}.
 

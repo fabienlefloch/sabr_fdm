@@ -353,12 +353,7 @@ Collecting terms, we see that
 $$(2-\alpha)\left[F_{min}Q_L^{n+1} + h\sum_{j=1}^J F_jQ_j^{n+1} +F_{max}Q_R^{n+1}\right]=\frac{1}{\alpha}f - \frac{(1-\alpha)^2}{\alpha}f$$
 and so the forward is preserved by BDF2 at $t_{n+1}$.
 
-
-
 \section{Reference Implementation Values}
-Checking the moments at every step is very useful way to validate a scheme's implementation in code. To support further validation we recorded specific values from our implementations as reference. The TR-BDF2 is using a value of $\alpha=2-\sqrt{2}$ whilst the RAN scheme is using Rannacher time-stepping for the first two full time-steps.
-
-
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|c|r|r|r|r|}
@@ -377,6 +372,107 @@ TRBDF3 & 0.149630615131 & 1.390034574220 & 0.036719878912 & 0.000785705142\\
 \caption{Sample values using 500 points and 5 time-steps, $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, T=1, f=1, F_{min}=0.0, F_{max}\approx 5, \delta=0.2, h=0.010050251256$}
 \end{center}
 \end{table} 
+Checking the moments at every step is very useful way to validate a scheme's implementation in code. To support further validation we recorded specific values from our implementations as reference. The TR-BDF2 is using a value of $\alpha=2-\sqrt{2}$ whilst the RAN scheme is using Rannacher time-stepping for the first two full time-steps.
+
+\section{Example Code}
+For illustration purpose, we detail here Matlab code (also working with Octave) for pricing vanilla options under the Arbitrage Free SABR model using Lawson-Swayne method. The performance numbers in this paper come from an optimized Scala implementation, not from this Scilab code.
+
+%\lstset{caption={Scilab code for Arbitrage Free SABR with Lawson-Swayne solver}, label=scilab_code}
+ \lstset{caption={makeDensityLawsonSwayne.m - Matlab/Octave code computing the arbitrage free SABR density with Lawson-Swayne},
+         basicstyle=\footnotesize\ttfamily, % Standardschrift
+         %numbers=left,               % Ort der Zeilennummern
+         numberstyle=\tiny,          % Stil der Zeilennummern
+         %stepnumber=2,               % Abstand zwischen den Zeilennummern
+         numbersep=5pt,              % Abstand der Nummern zum Text
+         tabsize=2,                  % Groesse von Tabs
+         extendedchars=true,         %
+         breaklines=true,            % Zeilen werden Umgebrochen
+         keywordstyle=\color{red},
+    		frame=b,         
+ %        keywordstyle=[1]\textbf,    % Stil der Keywords
+ %        keywordstyle=[2]\textbf,    %
+ %        keywordstyle=[3]\textbf,    %
+ %        keywordstyle=[4]\textbf,   \sqrt{\sqrt{}} %
+         stringstyle=\color{white}\ttfamily, % Farbe der String
+         showspaces=false,           % Leerzeichen anzeigen ?
+         showtabs=false,             % Tabs anzeigen ?
+         xleftmargin=17pt,
+         framexleftmargin=17pt,
+         framexrightmargin=5pt,
+         framexbottommargin=4pt,
+         %backgroundcolor=\color{lightgray},
+         showstringspaces=false      % Leerzeichen in Strings anzeigen ?        
+ }
+\begin{center}
+\begin{lstlisting}
+function [Q,QL,QR, F, Fmin, Fmax, h] = makeDensityLawsonSwayne(alpha, beta, nu, rho, forward, T, N, timesteps, Fmin, Fmax)
+  %init h, F and Q
+  h0 = (Fmax-Fmin)/N;
+  j0 = (forward-Fmin)/h0;
+  h = (forward-Fmin)/(j0-0.5);
+  F = Fmin-0.5*h:h:Fmin+(N-1.5)*h;
+  Fmax = Fmin + (N-2)*h;
+  Q = zeros(N,1); Q(j0+1,1)=1.0/h;
+  dt = T/timesteps;
+  %Lawson Swayne params
+  b = 1 - sqrt(2)/2;
+  dt1 = dt*b; dt2 = dt*(1-2*b);
+  %compute cache
+  forwardonebeta = forward.^(1-beta);
+  C0 = forward.^beta;
+  f = abs(F);
+  C = f.^beta;
+  fonebeta = f./C;
+  z = (fonebeta - forwardonebeta)/(alpha*(1-beta));
+  M = C.*C*0.5*alpha*alpha.*(1+2*rho*nu*z+nu.^2*z.^2);
+  gam = (C - C0) ./ (f - forward); gam(j0+1) = beta/forwardonebeta;
+  M1cache = exp(rho*nu*alpha*gam*dt1); M2cache = exp(rho*nu*alpha*gam*dt2);
+  %solve
+  QL = 0.0; QR = 0.0;
+  for t = 1:timesteps
+    [M, Q1, QL1, QR1] = solveStep(M, M1cache, dt1, h, Q, QL, QR);
+    [M, Q2, QL2, QR2] = solveStep(M, M1cache, dt1, h, Q1, QL1, QR1);
+    Q=(sqrt(2)+1)*Q2-sqrt(2)*Q1;
+    QL=(sqrt(2)+1)*QL2-sqrt(2)*QL1;
+    QR=(sqrt(2)+1)*QR2-sqrt(2)*QR1;
+    M = M.*M2cache;
+  end
+end
+function [M, Q1, QL1, QR1] = solveStep(M, M1cache, dt1, h, Q, QL, QR)
+  M = M .* M1cache;
+  frac = dt1/(h.^2); N = length(Q);
+  tri = diag(sparse(1+2*frac*M))+diag(sparse(-frac*M(1:N-1)),-1)+diag(sparse(-frac*M(2:N)),1);
+  tri(1,:) = zeros(1,N); tri(1,1:2)= [M(1) M(2)];
+  tri(N,:)= zeros(1,N); tri(N,N-1:N)=[M(end-1) M(end)];
+  Q(1) = 0; Q(N) = 0;
+  Q1 = tri\Q;
+  QL1 = QL + dt1/h*(M(2)*Q1(2)-M(1)*Q1(1));
+  QR1 = QR - dt1/h*(M(N)*Q1(N)-M(N-1)*Q1(N-1));
+end
+\end{lstlisting}
+\end{center}
+ \newpage
+
+\lstset{caption={priceCallSABRDensity.m - price a call option using Arbitrage Free SABR density}}
+\begin{center}
+\begin{lstlisting}
+function p = priceCallSABRDensity(strike, Q, QL,QR, Fmin, Fmax, h) 
+    if (strike < Fmin)
+      p = forward-strike;
+    else 
+      if (strike > Fmax)
+        p = 0
+      else
+        k0 = ceil((strike-Fmin)/h);
+        term = Fmin+k0*h-strike;
+        p = 0.5 * term * term * Q(k0+1) + (Fmax - strike) * QR;
+        k=k0+1:length(Q)-2;
+        p = p + sum((Fmin + (k - 0.5) * h - strike) * h .* Q(k+1));
+      end
+    end
+end
+\end{lstlisting}
+\end{center}
 
 %\section{TR-BDF2 vs TR-BDF3}
 %\subsection{First 4 steps}
@@ -391,6 +487,5 @@ TRBDF3 & 0.149630615131 & 1.390034574220 & 0.036719878912 & 0.000785705142\\
 %\end{figure}
 %
 %\subsection{Convergence and Performance}
-
 
 \end{document}

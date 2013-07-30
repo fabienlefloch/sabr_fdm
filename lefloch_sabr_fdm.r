@@ -30,35 +30,35 @@ ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_lmg3_500_5.eps",width=
 
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_40_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_40_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_1280_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_1280_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_640_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_640_5.eps",width=5,height=4)+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 
 # CN 5
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_5_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_5_5.eps",width=5,height=4)
 
 # LS
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_ls_500_5_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_ls_500_5_5.eps",width=5,height=4)
 
 # LMG3
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_lm3_500_5_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_lmg3_500_5_5.eps",width=5,height=4)
 
 # RAN
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5.txt', header=TRUE)
@@ -68,7 +68,7 @@ ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5.eps",width=5
 
 # TRBDF2
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_10_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_10_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_10.txt', header=TRUE)
@@ -77,12 +77,12 @@ ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_10.eps",wid
 
 # LMG2
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_lmg2_500_10_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_lmg2_500_10_5.eps",width=5,height=4)
 
 # TRBDF2
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_5_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_5_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_10.txt', header=TRUE)
@@ -92,13 +92,13 @@ ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_10.eps",wid
 
 # TRBDF3
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf3_500_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf3_500_5.eps",width=5,height=4)
 
 
 # CNS
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cns_500_10_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cns_500_10_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cns_500_10.txt', header=TRUE)
@@ -107,13 +107,13 @@ ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cns_500_10.eps",width=
 
 # TRBDF2 3
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_3.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_500_3.eps",width=5,height=4)
 
 
 # TRBDF3 3
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf3_500_3.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf3_500_3.eps",width=5,height=4)
 
 # PERF 500
@@ -134,8 +134,21 @@ ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_ah_500_steps_all.eps",width=5,h
 qplot(Time, Error, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Volatility Error", xlab="Time(s)")+scale_y_log10()+scale_x_log10()
 ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_ah_500_time_all.eps",width=5,height=4)
 
-#perf density 500 all
+#perf trbdf23
 M<-read.table('/home/fabien/mypapers/sabr_fdm/perf_density_hagan_500_d.txt', header=TRUE)
+Md <- M[M$Scheme == "TRBDF2" | M$Scheme=="TRBDF3",]
+qplot(TimeSteps, MaxError, data=Md, color=Scheme, linetype=Scheme, geom="line", ylab="Density Max Error", xlab="Number of time steps")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_density_hagan_500_steps_d.eps",width=6,height=4)
+qplot(Time, MaxError, data=Md, color=Scheme, linetype=Scheme, geom="line", ylab="Density Max Error", xlab="time")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_density_hagan_500_time_d.eps",width=6,height=4)
+M<-read.table('/home/fabien/mypapers/sabr_fdm/perf_vol_ah_500_d.txt', header=TRUE)
+Md <- M[M$Scheme == "TRBDF2" | M$Scheme=="TRBDF3",]
+qplot(TimeSteps, MaxError, data=Md, color=Scheme, linetype=Scheme, geom="line", ylab="Volatility Max Error", xlab="Number of time steps")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_vol_ah_500_steps_d.eps",width=6,height=4)
+qplot(Time, MaxError, data=Md, color=Scheme, linetype=Scheme, geom="line", ylab="Volatility Max Error", xlab="time")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
+ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_vol_ah_500_time_d.eps",width=6,height=4)
+
+#perf dens all
 M<-read.table('/home/fabien/mypapers/sabr_fdm/perf_density_hagan_500_all.txt', header=TRUE)
 
 qplot(TimeSteps, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Density Max Error", xlab="Number of time steps")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
@@ -191,12 +204,12 @@ ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_ah_250_time_all.eps",width=5,he
 
 # M on 5 steps
 M<-read.table('/home/fabien/mypapers/sabr_fdm/densitym_hagan_cn_500_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line")
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line")
 +coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_ls_500_5_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
-qplot(F, M0, data=M, color=factor(t), linetype=factor(t), geom="line")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, M0, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 
 # ---- 640  ----
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cn_640_40.txt', header=TRUE)
@@ -205,25 +218,25 @@ ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_640_40.eps",width=5
 
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cn_640_40_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_640_40_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cn_640_1280_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_640_1280_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_cn_640_640_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_640_640_5.eps",width=5,height=4)+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 
 # LMG2
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_lmg2_640_10_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_lmg2_640_10_5.eps",width=5,height=4)
 
 # TRBDF2
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_640_10_5.txt', header=TRUE)
-qplot(F, Q, data=M, color=factor(t), linetype=factor(t), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
+qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_640_10_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_trbdf2_640_10.txt', header=TRUE)

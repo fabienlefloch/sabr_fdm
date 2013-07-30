@@ -375,7 +375,7 @@ TRBDF3 & 0.149630615131 & 1.390034574220 & 0.036719878912 & 0.000785705142\\
 Checking the moments at every step is very useful way to validate a scheme's implementation in code. To support further validation we recorded specific values from our implementations as reference. The TR-BDF2 is using a value of $\alpha=2-\sqrt{2}$ whilst the RAN scheme is using Rannacher time-stepping for the first two full time-steps.
 
 \section{Example Code}
-For illustration purpose, we detail here Matlab code (also working with Octave) for pricing vanilla options under the Arbitrage Free SABR model using Lawson-Swayne method. The performance numbers in this paper come from an optimized Scala implementation, not from this Scilab code.
+For illustration purpose, we detail here Octave code (also working with Matlab) for pricing vanilla options under the Arbitrage Free SABR model using Lawson-Swayne method. The performance numbers in this paper come from an optimized Scala implementation, not from this Octave code.
 
 %\lstset{caption={Scilab code for Arbitrage Free SABR with Lawson-Swayne solver}, label=scilab_code}
  \lstset{caption={makeDensityLawsonSwayne.m - Matlab/Octave code computing the arbitrage free SABR density with Lawson-Swayne},

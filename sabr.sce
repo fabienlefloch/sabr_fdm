@@ -70,7 +70,7 @@ function p = price(isCall, strike, Q, QL,QR, Fmin, Fmax, h)
         term = strike-Fmin-(k0-1)*h
         p = 0.5 * term * term * Q(k0+1) + (strike-Fmin) * QL
         k=1:k0-1
-        p = p + sum((strike-Fmin - (k - 0.5) * h ) * h * Q(k+1))
+        p = p + sum((strike-Fmin - (k - 0.5) * h ) * h .* Q(k+1))
       end
     end
   end

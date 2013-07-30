@@ -36,8 +36,7 @@ function [M, Q1, QL1, QR1] = solveStep(M, M1cache, dt1, h, Q, QL, QR)
   frac = dt1/(h.^2); N = length(Q);
   tri = diag(sparse(1+2*frac*M))+diag(sparse(-frac*M(1:N-1)),-1)+diag(sparse(-frac*M(2:N)),1);
 %  tri = diag(1+2*frac*M)+diag(-frac*M(1:N-1),-1)+diag(-frac*M(2:N),1);
-  tri(1,:) = zeros(1,N); tri(1,1:2)= [M(1) M(2)];
-  tri(N,:)= zeros(1,N); tri(N,N-1:N)=[M(end-1) M(end)];
+  tri(1,1:2)= sparse([M(1) M(2)]); tri(N,N-1:N)=sparse([M(end-1) M(end)]);
   Q(1) = 0; Q(N) = 0;
   Q1 = tri\Q;
   %a = [0 -frac*M(1:N-2) M(end-1)];

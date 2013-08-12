@@ -46,25 +46,3 @@ function [M, Q1, QL1, QR1] = solveStep(M, M1cache, dt1, h, Q, QL, QR)
   QL1 = QL + dt1/h*(M(2)*Q1(2)-M(1)*Q1(1));
   QR1 = QR - dt1/h*(M(N)*Q1(N)-M(N-1)*Q1(N-1));
 end
-function x = TDMAsolver(a,b,c,d)
-%a, b, c are the column vectors for the compressed tridiagonal matrix, d is the right vector
-n = length(d); % n is the number of rows
- 
-% Modify the first-row coefficients
-c(1) = c(1) / b(1);    % Division by zero risk.
-d(1) = d(1) / b(1);   
- 
-for i = 2:n-1
-    temp = 1.0/(b(i) - a(i) * c(i-1));
-    c(i) = c(i)* temp;
-    d(i) = (d(i) - a(i) * d(i-1))*temp;
-end
- 
-d(n) = (d(n) - a(n) * d(n-1))/( b(n) - a(n) * c(n-1));
- 
-% Now back substitute.
-x(n) = d(n);
-for i = n-1:-1:1
-    x(i) = d(i) - c(i) * x(i + 1);
-end
-end

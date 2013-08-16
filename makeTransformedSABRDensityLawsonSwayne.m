@@ -25,11 +25,8 @@ function [P,PL,PR, zm, zmin, zmax, h] = makeTransformedSABRDensityLawsonSwayne(a
   Emdt2 = exp(rho*nu*alpha*Gammam*dt2); Emdt2(1)= Emdt2(2); Emdt2(J+2)= Emdt2(J+1);
   PL = 0.0; PR = 0.0; P = zeros(J+2,1); P(j0+1,1)=1.0/h;
   for t = 1:timesteps
-    %expiry = expiry + dt;
-    Em = Em .* Emdt1;
-    [P1, PL1, PR1] = solveStep(Fm, Cm, Em, dt1, h, P, PL, PR);
-    Em = Em .* Emdt1;
-    [P2, PL2, PR2] = solveStep(Fm, Cm, Em, dt1, h, P1, PL1, PR1);
+    Em = Em .* Emdt1; [P1, PL1, PR1] = solveStep(Fm, Cm, Em, dt1, h, P, PL, PR);
+    Em = Em .* Emdt1; [P2, PL2, PR2] = solveStep(Fm, Cm, Em, dt1, h, P1, PL1, PR1);
     P=(sqrt(2)+1)*P2-sqrt(2)*P1;
     PL=(sqrt(2)+1)*PL2-sqrt(2)*PL1;
     PR=(sqrt(2)+1)*PR2-sqrt(2)*PR1;

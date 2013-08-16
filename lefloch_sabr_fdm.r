@@ -52,14 +52,14 @@ qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1
 ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_ls_500_5_5.eps",width=5,height=4)
 
 # LMG3
-M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_lm3_500_5_5.txt', header=TRUE)
+M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_lm3_500_5.txt', header=TRUE)
 qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
-ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_lmg3_500_5_5.eps",width=5,height=4)
+ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_lmg3_500_5.eps",width=5,height=4)
 
 # RAN
-M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5_5.txt', header=TRUE)
+M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5.txt', header=TRUE)
 qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab="probability density")+coord_cartesian(xlim=c(0.95,1.05))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
-ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5_5.eps",width=5,height=4)
+ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5.eps",width=5,height=4)
 
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_ran_500_5.txt', header=TRUE)
 qplot(Strike, Hagan, data=M, color="Hagan Formula", linetype="Hagan Formula", geom="line", ylab="probability density")+geom_line(aes(x=Strike,y=HaganPDE,color="Rannacher", linetype="Rannacher"))+scale_color_manual(name="Method",values=c(2,1))+scale_linetype_manual(name="Method", values=c(2,1))+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(xlim=c(0,3))

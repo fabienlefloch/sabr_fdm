@@ -125,38 +125,7 @@ $n_{sd}$ & Points & Steps & Price & Vol\\
 \end{table} 
 The number of points used can not be too small: the forward should not be on the boundary. This restriction is much stricter for the uniform discretization of $Q$ than for the discretization in the changed variable $\theta$.
 
-
-\section{Crank-Nicolson Oscillations with SABR}\label{section_cn}
-\begin{figure}[htb]
-  \begin{center}  
-    \includegraphics[width=12cm]{density_hagan_cn_500_40.eps}
-  \end{center}
-     \caption{\label{fig:density_hagan_cn_500_40} Probability density in Hagan PDE discretised with Crank-Nicolson with 500 points and 40 time-steps. $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, \tau_{ex}=1$}
-\end{figure}
-
-We use the same parameters as the example of negative density with the standard SABR formula in \citep{hagan2013arbitrage}: $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%$ and forward $f=1$ at $\tau_{ex}=1$, a relatively fine discretisation in the rate dimension (500 points, that is $h = 0.01005$) and large time-steps (40 steps, that is $\delta=0.025$). \cite{hagan2013arbitrage} recommend between 200 and 500 points and 30 to 100 time-steps.
-
-Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the forward. To guarantee the absence of oscillations, the \emph{Courant number}  should be small enough $\Psi \leq 1$ (Theorem 2.2 in \cite{morton2005numerical}). For the uniform discretization of $Q(F)$, $\Psi_Q = M \frac{\delta}{h^2}$. This corresponds directly to the stability of the explicit Euler part of Crank-Nicolson. In practice, a higher value is acceptable because of a slight damping in Crank-Nicolson \citep{lawson1978extrapolation}. Although $M$ depends on $F$, we can use the at-the-money value at $f$, as the spike is located there; that is, 
-\begin{align}
-\Psi_Q &= \frac{1}{2} \alpha^2 f^{2\beta} \frac{\delta}{h^2} \\
-\Psi_{\theta} &= f^{\beta}\frac{\delta}{h^2} 
-\end{align} 
-
-\begin{figure}[htb]
-  \begin{center}  
-    \subfigure[with 40 time steps $\Psi_Q = 15.16$]{\label{fig:density_hagan_cn_500_40_5}
-\includegraphics[width=7cm]{density_hagan_cn_500_40_5.eps}}
-  \subfigure[with 1280 time steps $\Psi_Q = 0.47$]{\label{fig:density_hagan_cn_500_1280_5}
-\includegraphics[width=7cm]{density_hagan_cn_500_1280_5.eps}}
-  \end{center}
-     \caption{\label{fig:density_hagan_500_40_5} First 4 time steps of the probability density in Hagan PDE discretised with Crank-Nicolson}
-\end{figure}
-
-In our example, in Figures \ref{fig:density_hagan_cn_500_40} and \ref{fig:density_hagan_cn_500_40_5} $\Psi_Q \approx 15$ while Figure \ref{fig:density_hagan_cn_500_1280_5} shows that indeed when $\Psi < 1$ there are no oscillations. The Crank-Nicolson oscillations are even stronger with the PDE in $\theta$ as for $\alpha \ll 1$, we have $\Psi_{\theta} \gg \Psi_Q$. Using the same SABR parameters and $n_{sd}=3$ (corresponding to $F_{max} \approx 5$), $\Psi_{\theta} \approx 250$. In the next sections it is shown that a much smaller number of time steps can be used with other finite difference time-stepping techniques whilst still preserving good accuracy.
-
-\section{Alternative Schemes}
-We will focus our analysis on the PDE in $\theta$, but similar conclusion can be drawn for the PDE in $Q$.
-\subsection{Discretization of the the PDE in $\theta$}
+\section{Discretization of the the PDE in $\theta$}
 Let's define for $j=1,...,J$:
 \begin{alignat}{3}
 z_j &= z^{-} + jh \text{ , } \hat{y}_j&=y(z_j - \frac{1}{2}h) \text{ , } \hat{F}_j&=F(\hat{y}_j)\\
@@ -195,6 +164,37 @@ The probability accumulated at the boundaries is discretized as:
 \end{align}
 
 
+
+\section{Crank-Nicolson Oscillations with SABR}\label{section_cn}
+\begin{figure}[htb]
+  \begin{center}  
+    \includegraphics[width=12cm]{density_hagan_cn_500_40.eps}
+  \end{center}
+     \caption{\label{fig:density_hagan_cn_500_40} Probability density in Hagan PDE discretised with Crank-Nicolson with 500 points and 40 time-steps. $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, \tau_{ex}=1$}
+\end{figure}
+
+We use the same parameters as the example of negative density with the standard SABR formula in \citep{hagan2013arbitrage}: $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%$ and forward $f=1$ at $\tau_{ex}=1$, a relatively fine discretisation in the rate dimension (500 points, that is $h = 0.01005$) and large time-steps (40 steps, that is $\delta=0.025$). \cite{hagan2013arbitrage} recommend between 200 and 500 points and 30 to 100 time-steps.
+
+Figure \ref{fig:density_hagan_cn_500_40} shows strong oscillations around the forward. To guarantee the absence of oscillations, the \emph{Courant number}  should be small enough $\Psi \leq 1$ (Theorem 2.2 in \cite{morton2005numerical}). For the uniform discretization of $Q(F)$, $\Psi_Q = M \frac{\delta}{h^2}$. This corresponds directly to the stability of the explicit Euler part of Crank-Nicolson. In practice, a higher value is acceptable because of a slight damping in Crank-Nicolson \citep{lawson1978extrapolation}. Although $M$ depends on $F$, we can use the at-the-money value at $f$, as the spike is located there; that is, 
+\begin{align}
+\Psi_Q &= \frac{1}{2} \alpha^2 f^{2\beta} \frac{\delta}{h^2} \\
+\Psi_{\theta} &= f^{\beta}\frac{\delta}{h^2} 
+\end{align} 
+
+\begin{figure}[htb]
+  \begin{center}  
+    \subfigure[with 40 time steps $\Psi_Q = 15.16$]{\label{fig:density_hagan_cn_500_40_5}
+\includegraphics[width=7cm]{density_hagan_cn_500_40_5.eps}}
+  \subfigure[with 1280 time steps $\Psi_Q = 0.47$]{\label{fig:density_hagan_cn_500_1280_5}
+\includegraphics[width=7cm]{density_hagan_cn_500_1280_5.eps}}
+  \end{center}
+     \caption{\label{fig:density_hagan_500_40_5} First 4 time steps of the probability density in Hagan PDE discretised with Crank-Nicolson}
+\end{figure}
+
+In our example, in Figures \ref{fig:density_hagan_cn_500_40} and \ref{fig:density_hagan_cn_500_40_5} $\Psi_Q \approx 15$ while Figure \ref{fig:density_hagan_cn_500_1280_5} shows that indeed when $\Psi < 1$ there are no oscillations. The Crank-Nicolson oscillations are even stronger with the PDE in $\theta$ as for $\alpha \ll 1$, we have $\Psi_{\theta} \gg \Psi_Q$. Using the same SABR parameters and $n_{sd}=3$ (corresponding to $F_{max} \approx 5$), $\Psi_{\theta} \approx 250$. In the next sections it is shown that a much smaller number of time steps can be used with other finite difference time-stepping techniques whilst still preserving good accuracy.
+
+\section{Alternative Schemes}
+We will focus our analysis on the PDE in $\theta$, but similar conclusion can be drawn for the PDE in $Q$.
 
 \subsection{Rannacher}
 A common fix for Crank-Nicolson oscillations related to non smooth initial data is Rannacher time-stepping \citep{rannacher1984finite, GiCa2006}. It consists of introducing two half time-steps of implicit Euler time-stepping before applying Crank-Nicolson, because implicit Euler has much stronger damping properties. This comes at a cost in accuracy as implicit Euler is an order-1 scheme in time, especially when only a few time-steps are needed. 
@@ -323,13 +323,13 @@ For multi-stage schemes, it is also possible to consider $M$ as piecewise consta
 \begin{figure}[htb]
   \begin{center}  
   \subfigure[$t_N=T$]{\label{fig:density_hagan_ran_500_5_0}
-  \includegraphics[width=7cm]{density_hagan_ran_500_5.eps}}
-  \subfigure[Crank-Nicolson first 4 time steps with 5 time steps]{\label{fig:density_hagan_cn_500_5_5}
+  \includegraphics[width=7cm]{density_hagan_theta_ran_500_5.eps}}
+  \subfigure[Crank-Nicolson first 4 time steps with 5 time steps]{\label{fig:theta_hagan_cn_500_5}
 \includegraphics[width=7cm]{theta_hagan_cn_500_5.eps}}
   \subfigure[Rannacher first 4 time steps with 5 time steps]{\label{fig:density_hagan_ran_500_5_5}
 \includegraphics[width=7cm]{theta_hagan_ran_500_5.eps}}
-  \subfigure[LMG3 first 4 time steps with 5 time steps]{\label{fig:density_hagan_lmg3_500_5_5}
-\includegraphics[width=7cm]{theta_hagan_lmg3_500_5.eps}}
+  \subfigure[Lawson-Swayne first 4 time steps with 5 time steps]{\label{fig:density_hagan_lmg3_500_5_5}
+\includegraphics[width=7cm]{theta_hagan_ls_500_5.eps}}
   \end{center}
      \caption{\label{fig:density_hagan_lmg2_500_10} Probability density in Hagan PDE using a total of 5 time-steps}
 \end{figure}

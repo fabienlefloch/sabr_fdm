@@ -26,19 +26,8 @@ ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_vol_theta_ah_500_steps_all.eps"
 qplot(Time, MaxError, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="Implied Volatility Max Error", xlab="time")+scale_y_log10()+scale_x_log10()+opts(legend.direction = "vertical", legend.position = c(0.75,0.5))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/perf_vol_theta_ah_500_time_all.eps",width=6,height=4)
 ###
-M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_500_40.txt', header=TRUE)
-qplot(Strike, Density, data=M, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")
-M0 = M[M$Scheme == "Hagan" | M$Scheme =="CN",]
-qplot(Strike, Density, data=M0, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")+scale_color_manual(name="Method",values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+scale_linetype_manual(name="Method", values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(xlim=c(0.02,3))
-ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_500_40s.eps",width=5,height=4)
-
-
 M<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_theta_500_80.txt', header=TRUE)
 M0 = M[M$Scheme == "Hagan" | M$Scheme =="CN" ,]
-qplot(Strike, Density, data=M0, color=Scheme, linetype=Scheme, geom="line", ylab="probability density")+scale_color_manual(name="Method",values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+scale_linetype_manual(name="Method", values=c(1,2),labels=c("Hagan PDE", "Hagan Formula"))+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(xlim=c(0.02,3))
-ggsave(file="/home/fabien/mypapers/sabr_fdm/density_hagan_cn_theta_500_80s.eps",width=5,height=4)
-
-
 MQ<-read.table('/home/fabien/mypapers/sabr_fdm/density_hagan_500_40.txt', header=TRUE)
 MQ0 = MQ[M$Scheme =="CN" ,]
 

@@ -65,7 +65,7 @@ Another alternative would be to place the grid so that $F_0 = F_{min}$ and use b
 The formula for $\Gamma$ is also undefined for $F=f$, in which case we just use $\Gamma(f) = \frac{\partial C}{\partial F}(f)$.
 
 \section{Change of Variable}
-One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. A change of variable is proposed in \citep{hagan2013change} as a remedy:
+One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. A change of variable is proposed in \citep[p. 292 section 7.4]{andersen2010interest} as a remedy, and applied to this particular problem while still preserving moments in \citep{hagan2013change}:
 \begin{align}
 z(F) &= \int_{f}^F \frac{dF'}{D(F')}
 \end{align}
@@ -372,7 +372,7 @@ With the same parameters as in section \ref{section_cn}, we look at the maximum 
 %show convergence graph
 Other tests we performed indicate that the implied volatility maximum error or even the at-the-money implied volatility error would lead to similar conclusions. Furthermore, a Black implied volatility with an absolute error under 0.1\% was achieved with only 3 time-steps for Bathe, 6 for Lawson-Swayne and TR-BDF2 Bathe, 10 for LMG2, and 12 for BDF2 and RAN. Lawson-Swayne is the most efficient scheme on this problem, closely followed by TR-BDF2, Rannacher and BDF2.
 
-Higher order schemes like BDF3 or LMG3 were found to be no better performing than their second order variation on this problem.
+Higher order schemes like BDF3, LMG3 or a third order Richardson extrapolation were found to be no better performing than their second order variation on this problem.
 
 \subsubsection{Andreasen-Huge Example}
 We consider the SABR parameters used in \citep{andreasen2011zabr}: $\alpha=0.0873, \beta=0.7, \rho=-0.48, \nu=0.47$ with a forward of $f=0.025$ and a maturity $\tau_{ex}=10.0$ and look at the maximum error in implied volatility between $0.2f$ and $2f$.
@@ -545,5 +545,78 @@ Bathe & 0.149629009401 & 0.486420051293 & 0.036725562889 & 0.000008443878\\
 \end{center}
 \end{table} 
 Checking the moments at every step is very useful way to validate a scheme's implementation in code. To support further validation we recorded specific values from our implementations as reference. The TR-BDF2 is using a value of $\alpha=2-\sqrt{2}$ whilst the RAN scheme is using Rannacher time-stepping for the first two full time-steps. Extrapolation methods like RE and LMG2 produce here a very low negative accumulated probability at the higher boundary: there are very small oscillations in those schemes around the higher boundary. In practice it is unlikely to matter, furthermore, they quickly converge to the true value when the number of time-steps is increased. 
+
+\section{Convergence Tables}
+\begin{table}[htb]
+\begin{small}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+ $J$ & $N$ & ATM Value & Change & Ratio & Time(s)\\
+\hline \multicolumn{6}{|c|}{CN} \\ \hline
+ 80 & 5 & 38.92945097 & NaN & NaN & 1.1e-04\\
+ 160 & 10 & 37.13441397 & -1.8e+00 & NaN & 3.0e-04\\
+ 320 & 20 & 37.42600113 & 2.9e-01 & -6.2 & 7.8e-04\\
+ 640 & 40 & 37.57545976 & 1.5e-01 & 2.0 & 2.1e-03\\
+ 1280 & 80 & 37.65103999 & 7.6e-02 & 2.0 & 7.3e-03\\
+ 2560 & 160 & 37.68906248 & 3.8e-02 & 2.0 & 2.7e-02\\
+\hline \multicolumn{6}{|c|}{RAN} \\ \hline
+ 80 & 5 & 37.59281281 & NaN & NaN & 1.4e-04\\
+ 160 & 10 & 37.69385914 & 1.0e-01 & NaN & 2.9e-04\\
+ 320 & 20 & 37.71890369 & 2.5e-02 & 4.0 & 6.8e-04\\
+ 640 & 40 & 37.72510265 & 6.2e-03 & 4.0 & 2.2e-03\\
+ 1280 & 80 & 37.72664749 & 1.5e-03 & 4.0 & 7.6e-03\\
+ 2560 & 160 & 37.72703321 & 3.9e-04 & 4.0 & 2.7e-02\\
+\hline \multicolumn{6}{|c|}{BDF2} \\ \hline
+ 80 & 5 & 37.64496421 & NaN & NaN & 9.7e-05\\
+ 160 & 10 & 37.70648716 & 6.2e-02 & NaN & 2.1e-04\\
+ 320 & 20 & 37.72178602 & 1.5e-02 & 4.0 & 7.3e-04\\
+ 640 & 40 & 37.72578924 & 4.0e-03 & 3.8 & 2.1e-03\\
+ 1280 & 80 & 37.72681485 & 1.0e-03 & 3.9 & 7.3e-03\\
+ 2560 & 160 & 37.72707451 & 2.6e-04 & 3.9 & 2.8e-02\\
+\hline \multicolumn{6}{|c|}{RE} \\ \hline
+ 80 & 5 & 37.70951734 & NaN & NaN & 1.8e-04\\
+ 160 & 10 & 37.72310519 & 1.4e-02 & NaN & 4.2e-04\\
+ 320 & 20 & 37.72621751 & 3.1e-03 & 4.4 & 1.6e-03\\
+ 640 & 40 & 37.72693472 & 7.2e-04 & 4.3 & 5.5e-03\\
+ 1280 & 80 & 37.72710615 & 1.7e-04 & 4.2 & 2.0e-02\\
+ 2560 & 160 & 37.72714796 & 4.2e-05 & 4.1 & 7.2e-02\\
+\hline
+\end{tabular}
+\begin{tabular}{|c|c|c|c|}
+\hline
+ ATM Value & Change & Ratio & Time(s)\\
+\hline \multicolumn{4}{|c|}{LMG2} \\ \hline
+ 37.66503968 & NaN & NaN & 1.4e-04\\
+ 37.70865944 & 4.4e-02 & NaN & 3.9e-04\\
+ 37.72199774 & 1.3e-02 & 3.3 & 1.3e-03\\
+ 37.72578272 & 3.8e-03 & 3.5 & 4.9e-03\\
+ 37.72680412 & 1.0e-03 & 3.7 & 1.8e-02\\
+ 37.72707055 & 2.7e-04 & 3.8 & 7.1e-02\\
+\hline \multicolumn{4}{|c|}{LMG3} \\ \hline
+ 37.70255505 & NaN & NaN & 1.8e-04\\
+ 37.72145184 & 1.9e-02 & NaN & 5.7e-04\\
+ 37.72587154 & 4.4e-03 & 4.3 & 2.0e-03\\
+ 37.72686398 & 9.9e-04 & 4.5 & 7.6e-03\\
+ 37.72709114 & 2.3e-04 & 4.4 & 2.9e-02\\
+ 37.72714460 & 5.3e-05 & 4.2 & 1.2e-01\\
+\hline \multicolumn{4}{|c|}{LS} \\ \hline
+ 37.72979145 & NaN & NaN & 1.2e-04\\
+ 37.72762970 & -2.2e-03 & NaN & 2.9e-04\\
+ 37.72729564 & -3.3e-04 & 6.5 & 9.5e-04\\
+ 37.72719717 & -9.8e-05 & 3.4 & 3.4e-03\\
+ 37.72717084 & -2.6e-05 & 3.7 & 1.2e-02\\
+ 37.72716402 & -6.8e-06 & 3.9 & 4.9e-02\\
+\hline \multicolumn{4}{|c|}{TRBDF2} \\ \hline
+ 37.73019364 & NaN & NaN & 1.6e-04\\
+ 37.72772657 & -2.5e-03 & NaN & 3.0e-04\\
+ 37.72731963 & -4.1e-04 & 6.1 & 9.5e-04\\
+ 37.72720314 & -1.2e-04 & 3.5 & 3.5e-03\\
+ 37.72717233 & -3.1e-05 & 3.8 & 1.3e-02\\
+ 37.72716439 & -7.9e-06 & 3.9 & 5.0e-02\\
+\hline
+\end{tabular}
+\end{small}
+\caption{Convergence of at-the-money implied volatility using $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, T=1, f=1, n_{sd}=4$}
+\end{table} 
 
 \end{document}

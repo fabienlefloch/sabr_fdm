@@ -65,7 +65,7 @@ Another alternative would be to place the grid so that $F_0 = F_{min}$ and use b
 The formula for $\Gamma$ is also undefined for $F=f$, in which case we just use $\Gamma(f) = \frac{\partial C}{\partial F}(f)$.
 
 \section{Change of Variable}
-One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. A change of variable is proposed in \citep[p. 292 section 7.4]{andersen2010interest} as a remedy, and applied to this particular problem while still preserving moments in \citep{hagan2013change}:
+One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. This type of problem is not new and common approach is to consider a change of variable as a remedy \citep[p. 292 section 7.4]{andersen2010interest}. On this particular problem the following change of variable works well whilst still preserving the moments \citep{hagan2013change}:
 \begin{align}
 z(F) &= \int_{f}^F \frac{dF'}{D(F')}
 \end{align}
@@ -94,7 +94,7 @@ As a result, the effect of the diffusion term $D$ has almost been cancelled, and
   \begin{center}  
     \includegraphics[width=6cm]{fz.eps}
   \end{center}
-     \caption{\label{fig:Fz} F(z) with $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, \tau_{ex}=1$}
+     \caption{\label{fig:Fz} $F(z)$ with $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, \tau_{ex}=1$}
 \end{figure}
 
 For some extreme SABR parameters, the change of variable allows high accuracy with a small number of points. The uniform discretization of $Q$ in $F$ can require approximately 1000 times more points to reach a similar accuracy (Table \ref{table:discretization}).
@@ -230,7 +230,7 @@ P_R (t_{n+\frac{1}{2}}) -  P_R (t_{n}) &=\frac{\delta}{2} \frac{\hat{C}_J}{\hat{
 for $j=1,...,J$ and $n = 0, \frac{1}{2}, 1, \frac{3}{2}$. The next steps are Crank-Nicolson for $n=2,...,N-1$.
 
 \subsection{BDF2}
-The second order backward difference scheme (BDF2) is $A$-stable and $L$-stable multistep implicit scheme and will therefore damp any oscillation very quickly. Multi-steps schemes have however severe limitations: instabilities will occur for sudden changes in the system variables, and initialization by another method is needed for the first steps \citep{windcliff2001shout}. For example they can't be applied to linear complimentary problems like the pricing of American options through the discretization of the Black-Scholes PDE \citep{floc2013tr}. Those issues don't arise with the SABR density PDE. The first moments will be preserved with the following discretization:
+The second order backward difference scheme (BDF2) is $A$-stable and $L$-stable multistep implicit scheme and will therefore damp any oscillation very quickly. Multi-steps schemes have however severe limitations: instabilities will occur for sudden changes in the system variables, and initialization by another method is needed for the first steps \citep{windcliff2001shout}. For example they can not be applied to linear complimentary problems like the pricing of American options through the discretization of the Black-Scholes PDE \citep{floc2013tr}. Those issues do not arise with the SABR density PDE. The first moments will be preserved with the following discretization:
 \begin{subequations}
 \begin{align}
 3\theta_j^{n+2}-4\theta_j^{n+1}+\theta_j^n &= 2 \delta \mathcal{L}_{j}^{n+2} \theta_j^{n+2} \\
@@ -315,7 +315,7 @@ P_R(t_{n+1}) &= \frac{1}{2-\alpha}\left(\frac{1}{\alpha} P_R(t_{n+\alpha}) - \fr
 
 The weight $\alpha$ can be chosen to match Crank-Nicolson ($\alpha=\frac{1}{2}$) or to have proportional Jacobians ($\alpha = 2-\sqrt{2}$). The later provides optimal stability \citep{dharmaraja2009optimal}. 
 
-This can be extended to three-stages, with two stages of the trapezoidal rule and one stage of third order backward difference scheme (BDF3) as in \citep{bathe2005composite}, resulting in a method with even stronger damping properties that we will name "Bathe":
+This can be extended to three-stages, with two stages of the trapezoidal rule and one stage of third order backward difference scheme (BDF3) as in \citep{bathe2005composite}, resulting in a method with even stronger damping properties that we will name ``Bathe'':
 \begin{subequations}
 \begin{align}
 \theta_j^{n+\frac{1}{3}} &= \theta_j^n + \frac{\delta}{6}\left(\mathcal{L}_j^{n} \theta_j^n+\mathcal{L}_j^{n+\frac{1}{3}} \theta_j^{n+\frac{1}{3}}\right)\\
@@ -325,17 +325,19 @@ This can be extended to three-stages, with two stages of the trapezoidal rule an
 \end{subequations}
 
 \subsection{Optimising for Performance}
-The function $M(F,T)$ needs to be computed for every grid point $\left(F_j, t_n\right)$. The performance of the overall algorithm can be greatly improved by minimising the calls to the \texttt{pow} and \texttt{exp} functions as those are expensive. The quantities $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ and $\rho\nu\alpha\Gamma$ are constant in time and can be thus be cached between time-steps. A further improvement is to decompose $t_{n+1}$ as $t_{n}+\delta$, then 
+The function $E(T, F)$ needs to be computed for every grid point $\left(F_j, t_n\right)$. The performance of the overall algorithm can be greatly improved by minimising the calls to the \texttt{pow} and \texttt{exp} functions as those are expensive. The quantities $D(F)$ and $\Gamma(F)$ are constant in time and can thus be cached between time-steps. A further improvement is to decompose $t_{n+1}$ as $t_{n}+\delta$, then 
 \begin{equation}
 e^{\rho\nu\alpha\Gamma t_{n+1}}=e^{\rho\nu\alpha\Gamma t_n}e^{\rho\nu\alpha\Gamma \delta}
 \end{equation}
-We can therefore just compute the initial value $\frac{1}{2} \alpha^2 (1+2\rho\nu z+ \nu^2 z^2) C^2(F)$ together with $e_j = e^{\rho\nu\alpha\Gamma(F_j) \delta}$ for $j=0,...,J+1$ once, and at each step simply update $M$ as:
+We can therefore just compute  $e_j = e^{\rho\nu\alpha\Gamma(F_j) \delta}$ for $j=0,...,J+1$ once, and at each step simply update $E$ as:
 \begin{equation}
-M_j^{n+1} = e_j M_j^{n} 
+E_j^{n+1} = e_j E_j^{n} 
 \end{equation}
+%
+with initial value $E_j^0=1$.
 This can be easily extended to multiple time-step sizes used in multi-stage schemes.
 
-For multi-stage schemes, it is also possible to consider $M$ as piecewise constant between full time-steps and thus to avoid its computation for fractions of time-steps. In our tests, this led to a slightly decreased accuracy and little performance gain. The increase in error was particularly visible for long term options and large time-steps. We did not make that approximation for the tests presented in the next section.
+For multi-stage schemes, it is also possible to consider $E$ as piecewise constant between full time-steps and thus to avoid its computation for fractions of time-steps. In our tests, this led to a slightly decreased accuracy and little performance gain. The increase in error was particularly visible for long term options and large time-steps. We did not make that approximation for the tests presented in the next section.
 
 \section{Numerical Results}
 \subsection{Oscillations}
@@ -352,7 +354,7 @@ For multi-stage schemes, it is also possible to consider $M$ as piecewise consta
   \end{center}
      \caption{\label{fig:density_hagan_lmg2_500_10} Probability density in Hagan PDE using a total of 5 time-steps}
 \end{figure}
-With the same parameters as in section \ref{section_cn}, Figure \ref{fig:density_hagan_ran_500_5_0} shows a smooth positive probability density using only a total of 5 time-steps when Rannacher smoothing is applied to Crank-Nicolson. The density computed using second or third order Lawson-Morris-Gourlay (LMG2, LMG3), BDF2, Lawson-Swayne (LS), TR-BDF2 or Richardson extrapolation on implicit Euler (RE) would look very similar. Figure \ref{fig:density_hagan_ran_500_5_5} show no apparent oscillations in the first steps for the Rannacher scheme. BDF2 and LMG2 would look the same.  Lawson-Swayne shows a nearly imperceptible oscillation at the first step, and no more afterwards (Figure \ref{fig:density_hagan_lmg3_500_5_5}. TR-BDF2 and Bathe schemes behave similarly.
+With the same parameters as in section \ref{section_cn}, Figure \ref{fig:density_hagan_ran_500_5_0} shows a smooth positive probability density using only a total of 5 time-steps when Rannacher smoothing is applied to Crank-Nicolson. The density computed using second or third order Lawson-Morris-Gourlay (LMG2, LMG3), BDF2, Lawson-Swayne (LS), TR-BDF2 or Richardson extrapolation on implicit Euler (RE) would look very similar. Figure \ref{fig:density_hagan_ran_500_5_5} show no apparent oscillations in the first steps for the Rannacher scheme. BDF2 and LMG2 would look the same.  Lawson-Swayne shows a nearly imperceptible oscillation at the first step, and no more afterwards (Figure \ref{fig:density_hagan_lmg3_500_5_5}). TR-BDF2 and Bathe schemes behave similarly.
 In contrast, Crank-Nicolson had strong oscillations visible at $T=\tau_{ex}$ with 40 time steps for the PDE in $Q$ and even stronger oscillations with 80 time steps for the PDE in $\theta$.
 
 \subsection{Performance}
@@ -393,7 +395,7 @@ We consider the SABR parameters used in \citep{andreasen2011zabr}: $\alpha=0.087
 Only 3 time-steps are enough to achieve a Black implied volatility accuracy better than 0.1\%  with Lawson-Swayne and Bathe schemes, 4 time-steps for TR-BDF2, 5 for LMG2, 12 for RAN and BDF2.
 
 \section{Conclusion}
-It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. BDF2 is simpler still and more efficient. Other schemes such as TR-BDF2 or Lawson-Swayne can further increase efficiency. In our experiments TR-BDF2 and Lawson-Swayne were robust and had similar stability and convergence properties.
+It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. BDF2 is even more simple and more efficient. Other schemes such as TR-BDF2 or Lawson-Swayne can further increase efficiency. In our experiments TR-BDF2 and Lawson-Swayne were robust and had similar stability and convergence properties.
 
 
 Thus, with a careful choice of finite difference scheme, \citep{hagan2013arbitrage} is particularly competitive to the one step finite difference approach of \citep{andreasen2011zabr}.

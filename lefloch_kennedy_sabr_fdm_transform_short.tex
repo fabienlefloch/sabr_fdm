@@ -65,7 +65,7 @@ Another alternative would be to place the grid so that $F_0 = F_{min}$ and use b
 The formula for $\Gamma$ is also undefined for $F=f$, in which case we just use $\Gamma(f) = \frac{\partial C}{\partial F}(f)$.
 
 \section{Change of Variable}
-One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. This type of problem is not new and common approach is to consider a change of variable as a remedy \citep[p. 292 section 7.4]{andersen2010interest}. On this particular problem the following change of variable works well whilst still preserving the moments \citep{hagan2013change}:
+One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. However, this type of problem is not new and a common approach is to consider a change of variable as a remedy \citep[p. 292 section 7.4]{andersen2010interest}. On this particular problem the following change of variable works well whilst still preserving the moments \citep{hagan2013change}:
 \begin{align}
 z(F) &= \int_{f}^F \frac{dF'}{D(F')}
 \end{align}

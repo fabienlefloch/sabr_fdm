@@ -1,0 +1,40 @@
+\documentclass[]{rAMF2e}
+%\usepackage[square]{natbib}
+%\usepackage{authblk}
+\usepackage{listings}
+\usepackage[center]{caption}
+
+
+\begin{document}
+\doi{}
+\issn{}  \issnp{}
+\jvol{00} \jnum{00} \jyear{2013} %\jmonth{January--March}
+\def\jobtag{}
+\publisher{Unpublished}
+\jname{}
+
+\markboth{Fabien {Le Floc'h}, Gary Kennedy}{Draft}
+
+\title{SABR Characteristic Function}
+\author{Fabien {Le Floc'h}$^\star$\thanks{{\em{Correspondence Address}}: Calypso Technology, 106 rue de La Bo\'{e}tie, 75008 Paris. Email: \texttt{fabien\_lefloch@calypso.com} \vspace{6pt}} and Gary Kennedy$^\dag$}
+\affil{$^\star$Calypso Technology, 106 rue de La Bo\'{e}tie, 75008 Paris\\$^\dag$Clarus Financial Technology, London}
+%
+\date{\today}
+\received{v1.0 released September 2013}
+
+\maketitle
+\newcommand{\sgn}{\mathop{\mathrm{sgn}}}
+
+\section{Introduction}
+We write SABR as:
+\begin{align}
+dF &= \epsilon \alpha F^{\beta} dW_1 \\
+d\alpha &= \epsilon \nu \alpha dW_2 
+\end{align}
+Feynman Kac on an expansion of $\mathbb{E}(e^{i\Phi x})$ of SABR leads to
+\begin{align}
+\frac{\partial y}{\partial t} + \frac{1}{2}\epsilon^2\nu^2\alpha^2 \frac{\partial^2 y}{\partial  \alpha^2} + s_1 \alpha^2 y &= 0
+\end{align}
+where $s_1 = O(\epsilon^2)$ and $y(T,T) = e^{s_2 \alpha + s_3 \alpha^2}$
+
+\end{document}

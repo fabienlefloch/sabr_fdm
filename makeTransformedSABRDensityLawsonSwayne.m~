@@ -43,7 +43,7 @@ function [P, PL, PR] = solveStep(Fm, Cm, Em, dt, h, P, PL, PR)
   B(1) = Cm(1)/(Fm(2)-Fm(1))*Em(1); C(1) = Cm(2)/(Fm(2)-Fm(1))*Em(2);
   B(M) = Cm(M)/(Fm(M)-Fm(M-1))*Em(M); A(M-1) = Cm(M-1)/(Fm(M)-Fm(M-1))*Em(M-1);  
   tri = diag(sparse(B))+diag(sparse(A),-1)+diag(sparse(C),1);
-  tri(2,1:end)
+  tri(1,1:end)
   P(1) = 0; P(M) = 0;
   P = tri\P;
   PL = PL + dt*Cm(2)/(Fm(2)-Fm(1))*Em(2)*P(2);

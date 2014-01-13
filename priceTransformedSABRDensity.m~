@@ -49,7 +49,7 @@ end
 forward = 1.0; T = 1.0;
 alpha = 0.35; beta = 0.25; nu = 1.0; rho = -0.1;
 N = 500; timesteps = 5; ieee(1);
-[P, PL, PR, z, zmin, zmax, h] = makeTransformedSABRDensityLawsonSwayne(alpha, beta, nu, rho, forward, T, N, timesteps, 5);
+[P, PL, PR, z, zmin, zmax, h] = makeTransformedDensityLawsonSwayne(alpha, beta, nu, rho, forward, T, N, timesteps, 5);
 p = priceTransformedSABRDensity(1, forward, alpha, beta, nu, rho, forward, T, P, PL, PR, zmin, zmax, h)
 plot(F,P)
 t=cputime;[P, PL, PR, F, Fmin, Fmax, h] = makeDensityLawsonSwayne(alpha, beta, nu, rho, forward, T, N, timesteps, 0, 5);p = priceSABRDensity(1, forward, P, PL, PR, Fmin, Fmax, h);t=cputime()-t;

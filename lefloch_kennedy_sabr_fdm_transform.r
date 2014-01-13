@@ -107,3 +107,13 @@ M<-read.table('/home/fabien/mypapers/sabr_fdm/theta_hagan_bdf2_500_5.txt', heade
 qplot(F, Q, data=M, color=factor(round(1.0-t,digits=4)), linetype=factor(round(1.0-t,digits=4)), geom="line", ylab=expression(theta))+coord_cartesian(xlim=c(0.975,1.025))+scale_color_discrete(name="t")+scale_linetype_discrete(name="t")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/theta_hagan_bdf2_500_5.eps",width=5,height=4)
 
+
+## andreasen huge gamma example - no laplace correction
+M<-read.table('/home/fabien/mypapers/sabr_fdm/ah_gamma.txt', header=TRUE)
+qplot(K, vol, data=M, color=factor(gamma), geom="line")+scale_y_continuous(breaks=c(0.2,0.3,0.4,0.5,0.6,1.0))+coord_cartesian(ylim=c(0.0,1.0))
+
+M<-read.table('/home/fabien/mypapers/sabr_fdm/ah_gamma_laplace.txt', header=TRUE)
+qplot(K, vol, data=M, color=factor(gamma), geom="line")+scale_y_continuous(breaks=c(0.2,0.3,0.4,0.5,0.6,1.0))+coord_cartesian(ylim=c(0.0,1.0))
+
+M<-read.table('/home/fabien/mypapers/sabr_fdm/ah_gamma_direct.txt', header=TRUE)
+qplot(K, vol, data=M, color=factor(gamma), geom="line")+scale_y_continuous(breaks=c(0.2,0.3,0.4,0.5,0.6,0.7,1.0))+coord_cartesian(ylim=c(0.0,1.0))

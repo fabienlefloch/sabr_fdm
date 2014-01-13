@@ -20,7 +20,7 @@
 \affil{$^\star$Calypso Technology, 106 rue de La Bo\'{e}tie, 75008 Paris\\$^\dag$Clarus Financial Technology, London}
 %
 \date{\today}
-\received{v2.0 released August 2013}
+\received{v3.0 released January 2014}
 
 \maketitle
 \newcommand{\sgn}{\mathop{\mathrm{sgn}}}
@@ -39,12 +39,12 @@ Speed and accuracy were key ingredients in popularising the original SABR formul
 
 
 \section{Arbitrage Free SABR}
-In \citep{hagan2013arbitrage}, pricing with SABR parameters $\alpha, \beta, \rho, \nu$ and forward $f$ at $\tau_{ex}$ relies on the solution of a PDE on the probability density $Q$:
+In \citep{hagan2013arbitrage}, pricing with SABR parameters $\alpha, \beta, \rho, \nu$ and forward $f$ at $\tau_{ex}$ relies on the solution of the Fokker-Planck PDE on the probability density $Q$:
 
 \begin{align}\label{eqn_pde}
 \frac{\partial Q}{\partial T}(T,F) = \frac{\partial^2 M(T,F) Q(T,F)}{\partial F^2} \text{ and } \begin{cases}
-\frac{\partial Q_L}{\partial T}(T) = \lim_{F \to F_{min}} \frac{\partial M(T,F) Q(T,F)}{\partial F}\\
-\frac{\partial Q_R}{\partial T}(T) = \lim_{F \to F_{max}} \frac{\partial M(T,F) Q(T,F)}{\partial F}
+\frac{\partial Q_L}{\partial T}(T) = \lim_{F \to F_{\min}} \frac{\partial M(T,F) Q(T,F)}{\partial F}\\
+\frac{\partial Q_R}{\partial T}(T) = \lim_{F \to F_{\max}} \frac{\partial M(T,F) Q(T,F)}{\partial F}
 \end{cases}
 \end{align}
 with
@@ -52,33 +52,48 @@ with
 M(T,F) = \frac{1}{2} D^2(F) E(T,F) \text{, } E(T,F) = e^{\rho\nu\alpha\Gamma(F) T} \text{, } \Gamma(F) = \frac{F^{\beta}-f^{\beta}}{F-f}\\
 D(F) = \sqrt{\alpha^2 +2\alpha\rho\nu y(F)+ \nu^2 y(F)^2} F^{\beta} \text{, } y(F) = \frac{F^{1-\beta}-f^{1-\beta}}{1-\beta}
 \end{alignat}
+and initial condition 
+\begin{equation}
+\lim_{T \to 0} Q(T,F) = \delta (F - f)
+\end{equation}
 
-It is suggested that the lower boundary $F_{min}$ for the standard SABR model is placed at or near zero. However, the finite difference grid described in Appendix C of their paper starts at  $F_0 = F_{min} - \frac{h}{2}$, where, $h$ is the asset forward discretisation step size, potentially requiring the evaluation of functions not well-defined for negative values of $F_0$. Fortunately, only the product $M_0 Q_0$ is used in the discretisation of equation (\ref{eqn_pde}) and it is entirely defined by $M_1 Q_1$  because of the mirror-like boundary condition (imposed at the fictitious point $F_0$): 
-\begin{align}\label{boundary_condition}
-M_0 Q_0 + M_1 Q_1 &= 0
+Vanilla option prices can then be computed through the Breeden-Litzenberger formula \citep{breeden1978prices}:
+\begin{align}
+V_{call} (T, K) &= \int_{K}^{F_{\max}} (F-K) Q(T,F) dF + (F_{\max} - K) Q_R(T) \\
+V_{put} (T, K) &= (K-F_{\min}) Q_L(T) + \int_{F_{\min}}^{K} (K-F) Q(T,F) dF 
 \end{align}
-As long as $M_0 \neq 0$, $M_0 Q_0$ will take the value $-M_1 Q_1$. For example, we can use $|F_0|$ to compute $M_0$ and this will result in a symmetry around $F_{min}$.
 
+$M(T,F)$ represents the diffusion coefficient, which makes $D(F)\sqrt{E(T,F)}$ the normal local volatility in financial terms. In \citep{andreasen2011zabr}, a slightly simpler (less accurate for long maturities) expansion of the local volatility is found and directly used in the normal Dupire forward PDE on the call prices $V_{call}$:
+\begin{equation}\label{eqn:forward-dupire}
+\frac{\partial V_{call}}{\partial T}(T,F) = \frac{1}{2}\vartheta^2(T,F) \frac{\partial^2 V_{call}}{\partial F^2}(T,F)
+\end{equation} 
+with initial condition $V_{call}(0, F) = (f-F)^{+}$ and
+\begin{equation}
+\vartheta(T, F) = D(F)
+\end{equation}
 
-Another alternative would be to place the grid so that $F_0 = F_{min}$ and use boundary condition $Q_0 = 0$ there. The probability of absorption $Q_L$ could then be evaluated using an forward finite difference first derivative estimate. This would result in the exact same equation as (C.10a) of their paper and the scheme would still be moment preserving. However this comes at a cost of a slight loss of accuracy as, effectively, the derivative will be estimated using $Q_1 = Q(h)$ instead of $Q_1 = Q(\frac{h}{2})$.
+Both approaches are strikingly similar if the same local volatility approximation as well as the same PDE discretization is used. One difference lies in the boundary conditions: Hagan uses an absorbing condition at $F_{\min}$ and $F_{\max}$, while Andreasen and Huge use the standard Hagan expansion formula at the boundaries. It is also possible to use the more classic linear boundaries condition in the Dupire forward PDE, which is even closer, then to an absorbing condition in the probability density.
 
-The formula for $\Gamma$ is also undefined for $F=f$, in which case we just use $\Gamma(f) = \frac{\partial C}{\partial F}(f)$.
+While our will focus is mainly on the PDE in probability density, we will also have a quick look at the nearly equivalent Dupire representation in order to find out if one approach is more efficient or not.
 
 \section{Change of Variable}
+\subsection{Transformation of the Fokker-Planck PDE}
 One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. A change of variable is proposed in \citep[p. 292 section 7.4]{andersen2010interest} as a remedy, and applied to this particular problem while still preserving moments in \citep{hagan2013change}:
-\begin{align}
+\begin{align}\label{eqn-variable-transform}
 z(F) &= \int_{f}^F \frac{dF'}{D(F')}
 \end{align}
 This leads to a PDE in $\theta(z) = Q(T,F(z))D(F(z)) = Q(T,F(z))C(z)$ with $C(z) = D(F(z))$:
 \begin{align}\label{eqn-transform-pde}
 \frac{\partial \theta}{\partial T}(T,z) = \frac{1}{2} \frac{\partial}{\partial z} \left\lbrace \frac{1}{C(z)} \frac{\partial C(z)E(T,z)\theta(T,z)}{\partial z} \right\rbrace
  \text{ and } \begin{cases}
-\theta(T,z) = 0 \text{ as } z \to z^{-}=z(F_{min})\\
-\theta(T,z) = 0 \text{ as } z \to z^{+}=z(F_{max})
+\theta(T,z) = 0 \text{ as } z \to z^{-}=z(F_{\min})\\
+\theta(T,z) = 0 \text{ as } z \to z^{+}=z(F_{\max})
 \end{cases}
 \end{align}
 with \begin{align}
-y(z) &= \frac{\alpha}{\nu}\left[ \sinh(\nu z) + \rho (\cosh(\nu z) - 1) \right]\\
+\label{eqn-y(z)}
+y(z) &= \frac{\alpha}{\nu}\left[ \sinh(\nu z) + \rho (\cosh(\nu z) - 1) \right]\\ 
+\label{eqn-F(z)}
 F(y) &= \left[ f^{1-\beta} + (1-\beta)y \right]^{\frac{1}{1-\beta}}
 \end{align}
 
@@ -97,11 +112,18 @@ As a result, the effect of the diffusion term $D$ has almost been cancelled, and
      \caption{\label{fig:Fz} F(z) with $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, \tau_{ex}=1$}
 \end{figure}
 
+The call and put prices are obtained by integrating on the transformed density:
+\begin{align}
+V_{call} (T, K) &= \int_{z(K)}^{z^{+}} (F(z)-K) \theta(T,z) dz + (F_{\max} - K) P_R(T) \\
+V_{put} (T, K) &= (K-F_{\min}) P_L(T) + \int_{z^{-}}^{z(K)} (K-F(z)) \theta(T,z) dz
+\end{align}
+
+
 For some extreme SABR parameters, the change of variable allows high accuracy with a small number of points. The uniform discretization of $Q$ in $F$ can require approximately 1000 times more points to reach a similar accuracy (Table \ref{table:discretization}).
 \begin{table}[h]
 \begin{center}
 \begin{tabular}{|c|r|r|r|r|}
-\hline
+	\hline
 \multicolumn{5}{|c|}{Uniform discretization of $Q$ in $F$} \\ \hline
 $F_{max}$ & Points & Steps & Price & Vol \\
 5 & 10 & 5 & 0.65010 & 87.205  \\
@@ -125,6 +147,43 @@ $n_{sd}$ & Points & Steps & Price & Vol\\
 \end{table} 
 The number of points used can not be too small: the forward should not be on the boundary. This restriction is much stricter for the uniform discretization of $Q$ than for the discretization in the changed variable $\theta$.
 
+\subsection{Coordinate Transformation for the Forward Dupire PDE}
+The same variable transformation (\ref{eqn-variable-transform}) can be applied to the Dupire PDE resulting in:
+\begin{equation}
+\frac{\partial V_{call}}{\partial T}(T,z) = \frac{1}{2} \frac{\partial}{\partial z} \left\lbrace \frac{1}{C(z)} \frac{\partial C(z)E(T,z)V_{call}(T,z)}{\partial z} \right\rbrace
+\end{equation}
+
+with initial condition $V_{call}(0, z) = (f - F(z))^+$.
+
+A slightly simpler alternative approach consists in using a non uniform grid in $F$ inside a finite difference discretization of the forward Dupire PDE (\ref{eqn:forward-dupire}) as described in \citep{andersen2010interest}. The equivalent non uniform grid is defined by $F(z)$ where $z$ is a uniform discretization, paying attention to place the forward $f$ in the middle of two nodes in order to decrease the numerical error \citep{tavella-pricing}. It is also possible to smooth out the payoff at maturity by averaging, but this would not preserve put-call parity \citep{lefloch2013exacttr}.
+
+Let's define a uniform grid in the coordinate $z$, for $j=0,...,J$:
+\begin{alignat}{2}
+z_j &= z^{-} + jh \text{ , } h = \frac{1}{J+1}(z^{+}-z^{-})\\
+\end{alignat}
+
+Using Equations (\ref{eqn-y(z)}) and (\ref{eqn-F(z)}), the corresponding grid in $F$ would be:
+\begin{equation}
+F_j = F(y(z_j))
+\end{equation}
+
+To place the forward $f$ in the middle of two consecutive points, we first locate the index $j_0$ so that 
+$F_{j_0} \leq f < F_{j_0 + 1}$, that is:
+\begin{equation}
+j_0 = \lfloor\frac{z(y(f)) - z^{-}}{h}\rfloor
+\end{equation}
+And then we shift the grid by a distance $d$ defined by:
+\begin{equation}
+d = z(y(f))  - z\left(\frac{1}{2}(F_{j_0}+F_{j_0+1})\right)
+\end{equation}
+The new grid is then just generated via 
+\begin{equation}
+\tilde{F}_j = F(y(z_{0}+ d + j h))
+\end{equation}
+In addition, we make sure to keep the original boundaries, this is especially important as $z_{-}$ often corresponds to the absorbing barrier by forcing $\tilde{F}_0 = F(z_{-})$ and $\tilde{F}_J = F(z_{+})$.
+
+Finally, to compute the price of an option in between two grid nodes, we interpolate the discrete prices using a natural cubic spline in order to preserve the second derivative continuity (and therefore the probability density continuity) everywhere.
+ 
 \section{Discretization of the the PDE in $\theta$}
 Let's define for $j=1,...,J$:
 \begin{alignat}{3}
@@ -163,6 +222,24 @@ The probability accumulated at the boundaries is discretized as:
 \frac{\partial P_R}{\partial T} (T) &= \frac{\hat{C}_J}{\hat{F}_{J+1}-\hat{F}_J}\hat{E}_J(T)\theta(z_J, T) 
 \end{align}
 
+The call and put prices are obtained by integrating with the mid-point method. Let $z^* = z(y(K))$. We first suppose that $z^{-} < z^* < z^{+}$. Let $k$ be the index such that $z^{-}+(k-1)h < z^* \leq z^{-}+k h$ and $F_k = F(y(z^{-}+kh))$. Then
+\begin{align*}
+V_{call} &= \frac{h}{4(F_k-\hat{F}_k)}(F_k - K)^2 \theta_k 
++ \sum_{j=k+1}^{J-1} (\hat{F}_j - K) h \theta_j 
++ (F_{\max}-K) P_R\\
+V_{put} &= \frac{h}{4(\hat{F}_k-F_k)}(K-F_k)^2 \theta_k 
++ \sum_{j=1}^{k} (K-\hat{F}_j) h \theta_j 
++ (K-F_{\min}) P_L
+\end{align*}
+For the call option case, the first term corresponds to 
+\begin{equation}
+\int_{z^*}^{z_k}(F(z)-K)\theta(z)dz = \int_{K}^{F_k}(F-K)\frac{\theta(z(F))}{D(F)}dF
+\end{equation}
+ We then assume $\theta$ constant between $z_{k-1}$ and $z_{k}$, and make the approximation $D(F)=\frac{\partial F}{\partial z} \approx 2\frac{F_k-\hat{F}_k}{h}$ (we found that this choice preserved a smoother numerical density). The put option case is similar.
+
+
+When $z^* \leq z^{-}$, $V_{call} = f-K$ and $V_{put} = 0$. When $z^* \geq z^{+}$, $V_{call} = 0$ and $V_{put} = K-f$.
+
 \subsection{Moment Preserving Implicit Euler}
 \begin{subequations}
 \begin{align}
@@ -172,6 +249,18 @@ P_R (t_{n+1}) -  P_R (t_{n}) &= \delta \frac{\hat{C}_J}{\hat{F}_{J+1}-\hat{F}_J}
 \end{align}
 \end{subequations}
 for $j=1,...,J$ and $n=0,...,N-1$.
+
+It is suggested that the lower boundary $F_{\min}$ for the standard SABR model is placed at or near zero. However, the finite difference grid described in Appendix C of their paper starts at  $F_0 = F_{\min} - \frac{h}{2}$, where, $h$ is the asset forward discretisation step size, potentially requiring the evaluation of functions not well-defined for negative values of $F_0$. Fortunately, only the product $M_0 Q_0$ is used in the discretisation of equation (\ref{eqn_pde}) and it is entirely defined by $M_1 Q_1$  because of the mirror-like boundary condition (imposed at the fictitious point $F_0$): 
+\begin{align}\label{boundary_condition}
+M_0 Q_0 + M_1 Q_1 &= 0
+\end{align}
+As long as $M_0 \neq 0$, $M_0 Q_0$ will take the value $-M_1 Q_1$. For example, we can use $|F_0|$ to compute $M_0$ and this will result in a symmetry around $F_{min}$.
+
+
+Another alternative would be to place the grid so that $F_0 = F_{min}$ and use boundary condition $Q_0 = 0$ there. The probability of absorption $Q_L$ could then be evaluated using an forward finite difference first derivative estimate. This would result in the exact same equation as (C.10a) of their paper and the scheme would still be moment preserving. However this comes at a cost of a slight loss of accuracy as, effectively, the derivative will be estimated using $Q_1 = Q(h)$ instead of $Q_1 = Q(\frac{h}{2})$.
+
+The formula for $\Gamma$ is also undefined for $F=f$, in which case we just use $\Gamma(f) = \frac{\partial C}{\partial F}(f)$.
+
 
 \subsection{Moment Preserving Crank-Nicolson}
 \begin{subequations}
@@ -230,7 +319,7 @@ P_R (t_{n+\frac{1}{2}}) -  P_R (t_{n}) &=\frac{\delta}{2} \frac{\hat{C}_J}{\hat{
 for $j=1,...,J$ and $n = 0, \frac{1}{2}, 1, \frac{3}{2}$. The next steps are Crank-Nicolson for $n=2,...,N-1$.
 
 \subsection{BDF2}
-The second order backward difference scheme (BDF2) is $A$-stable and $L$-stable multistep implicit scheme and will therefore damp any oscillation very quickly. Multi-steps schemes have however severe limitations: instabilities will occur for sudden changes in the system variables, and initialization by another method is needed for the first steps \citep{windcliff2001shout}. For example they can't be applied to linear complimentary problems like the pricing of American options through the discretization of the Black-Scholes PDE \citep{floc2013tr}. Those issues don't arise with the SABR density PDE. The first moments will be preserved with the following discretization:
+The second order backward difference scheme (BDF2) is $A$-stable and $L$-stable multistep implicit scheme and will therefore damp any oscillation very quickly. Multi-steps schemes have however severe limitations: instabilities will occur for sudden changes in the system variables, and initialization by another method is needed for the first steps \citep{windcliff2001shout}. For example they can't be applied to linear complimentary problems like the pricing of American options through the discretization of the Black-Scholes PDE \citep{lefloc2013tr}. Those issues don't arise with the SABR density PDE. The first moments will be preserved with the following discretization:
 \begin{subequations}
 \begin{align}
 3\theta_j^{n+2}-4\theta_j^{n+1}+\theta_j^n &= 2 \delta \mathcal{L}_{j}^{n+2} \theta_j^{n+2} \\
@@ -295,7 +384,7 @@ for $j=1,...,J$ and $n=0,...,N-1$.
 The scheme is moment preserving as it can also be seen as a linear combination of implicit Euler schemes.
 
 \subsection{TR-BDF2}
-TR-BDF2 is a two-stage method where the first stage consists in applying the (weighted) trapezoidal rule (Crank-Nicolson) and the second stage consists in applying the second order backward difference scheme (BDF2) on the first stage result and the first stage initial input \citep{bank1985transient, Le07}. It is second order accurate in time and $L$-stable. It is not to be confused with the simpler multistep method BDF2: the full step only depends on the previous full step while BDF2 depends on the two previous timesteps and can lose its accuracy \citep{windcliff2001shout} with variable timesteps and linear complimentary problems. This scheme does not suffer from such drawbacks. The scheme has been applied to finance in the context of American option pricing \citep{floc2013tr}.
+TR-BDF2 is a two-stage method where the first stage consists in applying the (weighted) trapezoidal rule (Crank-Nicolson) and the second stage consists in applying the second order backward difference scheme (BDF2) on the first stage result and the first stage initial input \citep{bank1985transient, Le07}. It is second order accurate in time and $L$-stable. It is not to be confused with the simpler multistep method BDF2: the full step only depends on the previous full step while BDF2 depends on the two previous timesteps and can lose its accuracy \citep{windcliff2001shout} with variable timesteps and linear complimentary problems. This scheme does not suffer from such drawbacks. The scheme has been applied to finance in the context of American option pricing \citep{lefloc2013tr}.
 \begin{subequations}
 \begin{align}
 \intertext{First stage:}\label{eqn_trbdf2}
@@ -370,7 +459,7 @@ With the same parameters as in section \ref{section_cn}, we look at the maximum 
 \end{figure}
 
 %show convergence graph
-Other tests we performed indicate that the implied volatility maximum error or even the at-the-money implied volatility error would lead to similar conclusions. Furthermore, a Black implied volatility with an absolute error under 0.1\% was achieved with only 3 time-steps for Bathe, 6 for Lawson-Swayne and TR-BDF2 Bathe, 10 for LMG2, and 12 for BDF2 and RAN. Lawson-Swayne is the most efficient scheme on this problem, closely followed by TR-BDF2, Rannacher and BDF2.
+Other tests we performed indicate that the implied volatility maximum error or even the at-the-money implied volatility error would lead to similar conclusions. Furthermore, a Black implied volatility with an absolute error under 0.1\% was achieved with only 3 time-steps for Bathe, 6 for Lawson-Swayne and TR-BDF2, 10 for LMG2, and 12 for BDF2 and RAN. Lawson-Swayne is the most efficient scheme on this problem, closely followed by TR-BDF2, Rannacher and BDF2.
 
 Higher order schemes like BDF3, LMG3 or a third order Richardson extrapolation were found to be no better performing than their second order variation on this problem.
 
@@ -391,6 +480,32 @@ We consider the SABR parameters used in \citep{andreasen2011zabr}: $\alpha=0.087
 %show convergence graph
 
 Only 3 time-steps are enough to achieve a Black implied volatility accuracy better than 0.1\%  with Lawson-Swayne and Bathe schemes, 4 time-steps for TR-BDF2, 5 for LMG2, 12 for RAN and BDF2.
+
+\subsection{Dupire Forward PDE}
+The two different approaches result in the same smile, even with a relatively small number of time steps. With the Lawson Swayne finite difference method, the difference in implied volatility between the two approaches with 5 time-steps and $J=50, n_{std}=4$ is always under 0.04\%. Figure \ref{fig:ah_densities_5_lv} displays the probability density computed by a numerical difference on the prices using the SABR parameters of Andreasen-Huge.
+\begin{figure}[htb]
+  \begin{center}  
+  \subfigure[with 5 time-steps]{\label{fig:ah_densities_5_lv}
+  \includegraphics[width=7cm]{ah_densities_5_lv.eps}}
+  \subfigure[with 2 time-steps]{\label{fig:ah_densities_2_lv}
+\includegraphics[width=7cm]{ah_densities_2_lv.eps}}
+    \end{center}
+     \caption{\label{fig:ah_densities_lv} Numerical Probability Density on Andreasen-Huge example}
+\end{figure}
+
+If one pushes the number of time steps smaller yet, then a difference appears in favour the the probability density approach (Figure \ref{fig:ah_densities_2_lv} with 2 steps).
+\begin{figure}[htb]
+  \begin{center}  
+  \subfigure[with 5 time-steps]{\label{fig:ah_impliedvols_5_lv}
+  \includegraphics[width=7cm]{ah_impliedvols_5_lv.eps}}
+  \subfigure[with 2 time-steps]{\label{fig:ah_impliedvols_2_lv}
+\includegraphics[width=7cm]{ah_impliedvols_2_lv.eps}}
+    \end{center}
+     \caption{\label{fig:ah_impliedvols_lv} Black implied volatility on Andreasen-Huge example}
+\end{figure}
+
+The probability density approach is more accurate with less time steps, and more stable. With only two time-steps, the Dupire approach leads to a large oscillation in probability density. As Lawson-Swayne is strongly L-stable, it disappears very quickly: with three time-steps or more.
+
 
 \section{Conclusion}
 It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. BDF2 is simpler still and more efficient. Other schemes such as TR-BDF2 or Lawson-Swayne can further increase efficiency. In our experiments TR-BDF2 and Lawson-Swayne were robust and had similar stability and convergence properties.
@@ -496,27 +611,33 @@ The performance numbers in this paper come from an optimized Scala implementatio
 \lstset{caption={priceCallTransformedSABRDensity.m - price a call option using Arbitrage Free SABR density}}
 \begin{center}
 \begin{lstlisting}
-function p = priceCallTransformedSABRDensity(strike, Q, QL,QR, Fmin, Fmax, h) 
-   ystrike = (strike^(1-beta)-forward^(1-beta))/(1-beta);
-   zstrike = -1/nu*log((sqrt(1-rho^2+(rho+nu*ystrike/alpha)^2)-rho-nu*ystrike/alpha)/(1-rho));
-    if (zstrike < zmin)
-      p = forward-strike;
-    else 
-      if (zstrike > zmax)
-        p = 0
-      else
-        k0 = ceil((zstrike-zmin)/h);
-        ztilde = zmin+k0*h;
-        ftilde = makeForward(alpha, beta, nu, rho, forward, ztilde);
-        Fmax = makeForward(alpha, beta, nu, rho, forward, zmax);
-        term = ftilde-strike;
-        p = 0.5 * term * term *P(k0+1) + (Fmax - strike) * PR;
-        k=k0+1:length(P)-2;
-        zm = zmin + (k-0.5)*h;        
-        Fm = makeForward(alpha, beta, nu, rho, forward, zm);     
-        p = p + (Fm - strike) * h * P(k+1);
+function p = priceCallTransformedSABRDensity(strike, alpha, beta, nu, rho, forward, T, P, PL,PR, zmin, zmax, h) 
+  ystrike = (strike^(1-beta)-forward^(1-beta))/(1-beta);
+  zstrike = -1/nu*log((sqrt(1-rho^2+(rho+nu*ystrike/alpha)^2)-rho-nu*ystrike/alpha)/(1-rho));
+  if (zstrike <= zmin)
+    p = forward-strike;
+  else 
+    if (zstrike >= zmax)
+      p = 0;
+    else
+      Fmax = makeForward(alpha, beta, nu, rho, forward, zmax);
+      p = (Fmax - strike) * PR;
+      k0 = ceil((zstrike-zmin)/h);
+      ztilde = zmin + k0*h;
+      ftilde = makeForward(alpha, beta, nu, rho, forward, ztilde);
+      term = ftilde - strike;
+      if (term > 1e-5)
+        zm = zmin + (k0-0.5) * h;
+        Fm = makeForward(alpha, beta, nu, rho, forward, zm); 
+        dFdz = (ftilde-Fm) / (ztilde - zm);
+        p = p + 0.5 * term * term * P(k0+1)/dFdz;
       end
+      k = k0+1:length(P)-2;
+      zm = zmin + (k-0.5) * h;        
+      Fm = makeForward(alpha, beta, nu, rho, forward, zm);     
+      p = p + (Fm - strike) * h * P(k+1);
     end
+  end
 end
 function F = makeForward(alpha, beta, nu, rho, forward, z) 
   y = alpha/nu*(sinh(nu*z)+rho*(cosh(nu*z)-1));
@@ -533,12 +654,12 @@ end
 Scheme & ATM price & $\theta(0)$ & $P_L$ & $P_R$\\
 CN & 0.156536999912 & -75.391631075100 & 0.036151920718 & 0.000013551980\\
 RAN & 0.149164032279 & 0.486588975088 & 0.037035726447 & 0.000022398224\\
-BDF2 & 0.149367146751 & 0.478480554725 & 0.036571170375 & 0.000034872631\\
-RE & 0.149620613592 & 0.482424676955 & 0.036971313630 & -0.000001793511\\
-LMG2 & 0.149447020543 & 0.486727660232 & 0.037356585469 & -0.000003337903\\
-LS & 0.149699973996 & 0.482422521405 & 0.036472664324 & 0.000010671927\\
-TRBDF2 & 0.149701545689 & 0.482401023656 & 0.036469263805 & 0.000010658861\\
-Bathe & 0.149629009401 & 0.486420051293 & 0.036725562889 & 0.000008443878\\
+BDF2 & 0.149369112191 & 0.478480554725 & 0.036571170375 & 0.000034872631\\
+RE & 0.149622595233 & 0.482424676955 & 0.036971313630 & -0.000001793511\\
+LMG2 & 0.149449019860 & 0.486727660232 & 0.037356585469 & -0.000003337903\\
+LS & 0.149701955629 & 0.482422521405 & 0.036472664324 & 0.000010671927\\
+TRBDF2 & 0.149703527234 & 0.482401023656 & 0.036469263805 & 0.000010658861\\
+Bathe & 0.149631007454 & 0.486420051293 & 0.036725562889 & 0.000008443878\\
 \hline
 \end{tabular}
 \caption{Sample values using 500 points and 5 time-steps, $\alpha=35\%, \beta=0.25, \rho=-10\%, \nu=100\%, T=1, f=1, n_{sd}=4, \delta=0.2, h=0.012018637349$}

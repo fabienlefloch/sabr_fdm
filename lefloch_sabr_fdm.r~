@@ -275,11 +275,6 @@ M<-read.table('/home/fabien/mypapers/sabr_fdm/ah_impliedvols_lv_2.txt', header=T
 qplot(Strike, Hagan, data=M, color="Hagan Formula", geom="line", ylab="Black Implied Volatility")+geom_line(aes(x=Strike,y=HaganDensity,color="Fokker-Planck PDE"))+geom_line(aes(x=Strike,y=HaganLVCubic,color="Dupire PDE"))+scale_color_discrete(name="Method")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(ylim=c(0.2,0.5))
 ggsave(file="/home/fabien/mypapers/sabr_fdm/ah_impliedvols_2_lv.eps",width=5,height=4)
 
-M<-read.table('/home/fabien/mypapers/sabr_fdm/ah_impliedvols_lv_5.txt', header=TRUE)
-qplot(Strike, Hagan, data=M, color="Hagan Formula", geom="line", ylab="Black Implied Volatility")+geom_line(aes(x=Strike,y=HaganDensity,color="Fokker-Planck PDE"))+geom_line(aes(x=Strike,y=HaganLVCubic,color="Dupire PDE"))+scale_color_discrete(name="Method")+opts(legend.direction = "vertical", legend.position = c(0.75,0.75))+coord_cartesian(ylim=c(0.2,0.5))
-ggsave(file="/home/fabien/mypapers/sabr_fdm/ah_impliedvols_5_lv.eps",width=5,height=4)
-
-
 ## exp factor
 M<-read.table('/home/fabien/mypapers/sabr_fdm/ah_impliedvols_noexp.txt', header=TRUE)
 qplot(Strike, Hagan, data=M, color="Hagan Formula", linetype="Hagan Formula", geom="line", ylab="implied volatilities")+geom_line(aes(x=Strike,y=HaganDensity,color="Hagan Local Vol", linetype="Hagan Local Vol"))+geom_line(aes(x=Strike,y=HaganLVCubic,color="Andreasen-Huge Local Vol", linetype="Andreasen-Huge Local Vol"))

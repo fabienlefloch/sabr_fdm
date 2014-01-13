@@ -77,9 +77,14 @@ Both approaches are strikingly similar if the same local volatility approximatio
 While our will focus is mainly on the PDE in probability density, we will also have a quick look at the nearly equivalent Dupire representation in order to find out if one approach is more efficient or not.
 
 \section{Change of Variable}
+<<<<<<< HEAD
 \subsection{Transformation of the Fokker-Planck PDE}
-One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. However, this type of problem is not new and a common approach is to consider a change of variable as a remedy \citep[p. 292 section 7.4]{andersen2010interest}. On this particular problem the following change of variable works well whilst still preserving the moments \citep{hagan2013change}:
+One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. A change of variable is proposed in \citep[p. 292 section 7.4]{andersen2010interest} as a remedy, and applied to this particular problem while still preserving moments in \citep{hagan2013change}:
 \begin{align}\label{eqn-variable-transform}
+=======
+One practical difficulty that arises with the Arbitrage Free PDE described in equations (\ref{eqn_pde}) is the choice of $F_{max}$. \citet{hagan2013arbitrage} proposes a formula to estimate the required $F_{max}$, that, for some parameters is not suitable. It can be very large for long term deals and as a consequence the discretization requires a very large number of points to obtain an acceptable accuracy. The technique becomes inefficient. However, this type of problem is not new and a common approach is to consider a change of variable as a remedy \citep[p. 292 section 7.4]{andersen2010interest}. On this particular problem the following change of variable works well whilst still preserving the moments \citep{hagan2013change}:
+\begin{align}
+>>>>>>> 3bc38cd758004846f556e71a14b8f93db16732e8
 z(F) &= \int_{f}^F \frac{dF'}{D(F')}
 \end{align}
 This leads to a PDE in $\theta(z) = Q(T,F(z))D(F(z)) = Q(T,F(z))C(z)$ with $C(z) = D(F(z))$:
@@ -319,7 +324,11 @@ P_R (t_{n+\frac{1}{2}}) -  P_R (t_{n}) &=\frac{\delta}{2} \frac{\hat{C}_J}{\hat{
 for $j=1,...,J$ and $n = 0, \frac{1}{2}, 1, \frac{3}{2}$. The next steps are Crank-Nicolson for $n=2,...,N-1$.
 
 \subsection{BDF2}
-The second order backward difference scheme (BDF2) is $A$-stable and $L$-stable multistep implicit scheme and will therefore damp any oscillation very quickly. Multi-steps schemes have however severe limitations: instabilities will occur for sudden changes in the system variables, and initialization by another method is needed for the first steps \citep{windcliff2001shout}. For example they can not be applied to linear complimentary problems like the pricing of American options through the discretization of the Black-Scholes PDE \citep{lefloc2013tr}. Those issues don't arise with the SABR density PDE. The first moments will be preserved with the following discretization:
+<<<<<<< HEAD
+The second order backward difference scheme (BDF2) is $A$-stable and $L$-stable multistep implicit scheme and will therefore damp any oscillation very quickly. Multi-steps schemes have however severe limitations: instabilities will occur for sudden changes in the system variables, and initialization by another method is needed for the first steps \citep{windcliff2001shout}. For example they can't be applied to linear complimentary problems like the pricing of American options through the discretization of the Black-Scholes PDE \citep{lefloc2013tr}. Those issues don't arise with the SABR density PDE. The first moments will be preserved with the following discretization:
+=======
+The second order backward difference scheme (BDF2) is $A$-stable and $L$-stable multistep implicit scheme and will therefore damp any oscillation very quickly. Multi-steps schemes have however severe limitations: instabilities will occur for sudden changes in the system variables, and initialization by another method is needed for the first steps \citep{windcliff2001shout}. For example they can not be applied to linear complimentary problems like the pricing of American options through the discretization of the Black-Scholes PDE \citep{floc2013tr}. Those issues do not arise with the SABR density PDE. The first moments will be preserved with the following discretization:
+>>>>>>> 3bc38cd758004846f556e71a14b8f93db16732e8
 \begin{subequations}
 \begin{align}
 3\theta_j^{n+2}-4\theta_j^{n+1}+\theta_j^n &= 2 \delta \mathcal{L}_{j}^{n+2} \theta_j^{n+2} \\

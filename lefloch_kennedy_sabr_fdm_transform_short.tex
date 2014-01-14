@@ -155,18 +155,16 @@ The same variable transformation (\ref{eqn-variable-transform}) can be applied t
 
 with initial condition $V_{call}(0, z) = (f - F(z))^+$.
 
-A slightly simpler alternative approach consists in using a non uniform grid in $F$ inside a finite difference discretization of the forward Dupire PDE (\ref{eqn:forward-dupire}) as described in \citep{andersen2010interest}. The equivalent non uniform grid is defined by $F(z)$ where $z$ is a uniform discretization, paying attention to place the forward $f$ in the middle of two nodes in order to decrease the numerical error \citep{tavella-pricing}. It is also possible to smooth out the payoff at maturity by averaging, but this would not preserve put-call parity \citep{lefloch2013exacttr}.
+A slightly simpler alternative approach consists in using an equivalent non-uniform grid in $F$ inside a finite difference discretization of the forward Dupire PDE (\ref{eqn:forward-dupire}) as described in \citep{andersen2010interest}. The equivalent non uniform grid is defined by $F(z)$ where $z$ is a uniform discretization. Care must be taken to place the forward $f$ in the middle of two nodes in order to decrease the numerical error \citep{tavella-pricing}. Another technique to reduce the numerical error is to smooth out the payoff at maturity by averaging, but this would not preserve put-call parity \citep{lefloch2013exacttr}.
 
-Let's define a uniform grid in the coordinate $z$, for $j=0,...,J$:
+Let's define a uniform grid in the coordinate $z$, for $j=0,...,J+1$:
 \begin{alignat}{2}
-z_j &= z^{-} + jh \text{ , } h = \frac{1}{J+1}(z^{+}-z^{-})\\
+z_j &= z^{-} + j h \text{ , } h = \frac{1}{J+1}(z^{+}-z^{-})
 \end{alignat}
-
 Using Equations (\ref{eqn-y(z)}) and (\ref{eqn-F(z)}), the corresponding grid in $F$ would be:
 \begin{equation}
-F_j = F(y(z_j))
+F_j = F\left(y(z_j)\right)  = F\left( y\left(z^{-} + \frac{j}{J+1}\left(z^{+}-z^{-}\right)\right)  \right)
 \end{equation}
-
 To place the forward $f$ in the middle of two consecutive points, we first locate the index $j_0$ so that 
 $F_{j_0} \leq f < F_{j_0 + 1}$, that is:
 \begin{equation}
@@ -174,13 +172,13 @@ j_0 = \lfloor\frac{z(y(f)) - z^{-}}{h}\rfloor
 \end{equation}
 And then we shift the grid by a distance $d$ defined by:
 \begin{equation}
-d = z(y(f))  - z\left(\frac{1}{2}(F_{j_0}+F_{j_0+1})\right)
+d = z(y(f))  - z(y\left(\frac{1}{2}(F_{j_0}+F_{j_0+1})\right))
 \end{equation}
 The new grid is then just generated via 
 \begin{equation}
-\tilde{F}_j = F(y(z_{0}+ d + j h))
+\tilde{F}_j = F(y(z_{0}+ j h + d)) = F(y( z^{-} + \frac{j}{J+1}\left(z^{+}-z^{-}\right) + z(y(f))  - z(y\left(\frac{1}{2}(F_{j_0}+F_{j_0+1})\right)) )) 
 \end{equation}
-In addition, we make sure to keep the original boundaries, this is especially important as $z_{-}$ often corresponds to the absorbing barrier by forcing $\tilde{F}_0 = F(z_{-})$ and $\tilde{F}_J = F(z_{+})$.
+In addition, we make sure to keep the original boundaries, this is especially important as $z^{-}$ often corresponds to the absorbing barrier by forcing $\tilde{F}_0 = F(y(z^{-}))$ and $\tilde{F}_{J+1} = F(y(z^{+}))$.
 
 Finally, to compute the price of an option in between two grid nodes, we interpolate the discrete prices using a natural cubic spline in order to preserve the second derivative continuity (and therefore the probability density continuity) everywhere.
  
@@ -384,7 +382,7 @@ for $j=1,...,J$ and $n=0,...,N-1$.
 The scheme is moment preserving as it can also be seen as a linear combination of implicit Euler schemes.
 
 \subsection{TR-BDF2}
-TR-BDF2 is a two-stage method where the first stage consists in applying the (weighted) trapezoidal rule (Crank-Nicolson) and the second stage consists in applying the second order backward difference scheme (BDF2) on the first stage result and the first stage initial input \citep{bank1985transient, Le07}. It is second order accurate in time and $L$-stable. It is not to be confused with the simpler multistep method BDF2: the full step only depends on the previous full step while BDF2 depends on the two previous timesteps and can lose its accuracy \citep{windcliff2001shout} with variable timesteps and linear complimentary problems. This scheme does not suffer from such drawbacks. The scheme has been applied to finance in the context of American option pricing \citep{lefloc2013tr}.
+TR-BDF2 is a two-stage method where the first stage consists in applying the (weighted) trapezoidal rule (Crank-Nicolson) and the second stage consists in applying the second order backward difference scheme (BDF2) on the first stage result and the first stage initial input \citep{bank1985transient, Le07}. It is second order accurate in time and $L$-stable. It is not to be confused with the simpler multistep method BDF2: the full step only depends on the previous full step while BDF2 depends on the two previous timesteps and can lose its accuracy \citep{windcliff2001shout} with variable timesteps and linear complimentary problems. This scheme does not suffer from such drawbacks. The scheme has been applied to finance in the context of American option pricing \citep{lefloch2013tr}.
 \begin{subequations}
 \begin{align}
 \intertext{First stage:}\label{eqn_trbdf2}
@@ -484,7 +482,7 @@ We consider the SABR parameters used in \citep{andreasen2011zabr}: $\alpha=0.087
 Only 3 time-steps are enough to achieve a Black implied volatility accuracy better than 0.1\%  with Lawson-Swayne and Bathe schemes, 4 time-steps for TR-BDF2, 5 for LMG2, 12 for RAN and BDF2.
 
 \subsection{Dupire Forward PDE}
-The two different approaches result in the same smile, even with a relatively small number of time steps. With the Lawson Swayne finite difference method, the difference in implied volatility between the two approaches with 5 time-steps and $J=50, n_{std}=4$ is always under 0.04\%. Figure \ref{fig:ah_densities_5_lv} displays the probability density computed by a numerical difference on the prices using the SABR parameters of Andreasen-Huge.
+The two different approaches result in the same smile, even with a relatively small number of time steps. With the Lawson Swayne finite difference method, the difference in implied volatility between the two approaches with 5 time-steps and $J=50, n_{sd}=4$ is always under 0.04\%. Figure \ref{fig:ah_densities_5_lv} displays the probability density computed by a numerical difference on the prices using the SABR parameters of Andreasen-Huge.
 \begin{figure}[htb]
   \begin{center}  
   \subfigure[with 5 time-steps]{\label{fig:ah_densities_5_lv}

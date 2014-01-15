@@ -148,9 +148,9 @@ $n_{sd}$ & Points & Steps & Price & Vol\\
 The number of points used can not be too small: the forward should not be on the boundary. This restriction is much stricter for the uniform discretization of $Q$ than for the discretization in the changed variable $\theta$.
 
 \subsection{Coordinate Transformation for the Forward Dupire PDE}
-The same variable transformation (\ref{eqn-variable-transform}) can be applied to the Dupire PDE resulting in:
+The same variable transformation (\ref{eqn-variable-transform}) can be applied to the Dupire forward PDE with $\vartheta^2(T,F)=D^2(F)E(F,T)$ resulting in:
 \begin{equation}
-\frac{\partial V_{call}}{\partial T}(T,z) = \frac{1}{2} \frac{\partial}{\partial z} \left\lbrace \frac{1}{C(z)} \frac{\partial C(z)E(T,z)V_{call}(T,z)}{\partial z} \right\rbrace
+\frac{\partial V_{call}}{\partial T}(T,z) = \frac{1}{2} C(z)E(T,z) \frac{\partial}{\partial z} \left\lbrace \frac{1}{C(z)} \frac{\partial V_{call}(T,z)}{\partial z} \right\rbrace
 \end{equation}
 
 with initial condition $V_{call}(0, z) = (f - F(z))^+$.

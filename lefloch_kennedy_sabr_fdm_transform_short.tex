@@ -3,6 +3,7 @@
 %\usepackage{authblk}
 \usepackage{listings}
 \usepackage[center]{caption}
+\usepackage{hyperref}
 
 
 \begin{document}
@@ -20,12 +21,12 @@
 \affil{$^\star$Calypso Technology, 106 rue de La Bo\'{e}tie, 75008 Paris\\$^\dag$Clarus Financial Technology, London}
 %
 \date{\today}
-\received{v3.0 released January 2014}
+\received{v3.1 released April 2014}
 
 \maketitle
 \newcommand{\sgn}{\mathop{\mathrm{sgn}}}
 \begin{abstract}
-This paper presents various finite difference schemes applied to the SABR arbitrage free density problem with a focus on stability and speed.
+This paper presents various finite difference schemes applied to the SABR arbitrage free density problem. Hagan initially proposed a Crank-Nicolson discretization, which can lead to oscillations in the option price. Among a variety of finite difference schemes, it is found that the TR-BDF2 and Lawson-Swayne schemes stand out on this problem in terms of stability and speed.
 \begin{keywords}stochastic volatility, SABR, TR-BDF2, Crank-Nicolson, finite difference, finance\end{keywords}
 \end{abstract}
 
@@ -96,7 +97,6 @@ y(z) &= \frac{\alpha}{\nu}\left[ \sinh(\nu z) + \rho (\cosh(\nu z) - 1) \right]\
 \label{eqn-F(z)}
 F(y) &= \left[ f^{1-\beta} + (1-\beta)y \right]^{\frac{1}{1-\beta}}
 \end{align}
-
 The probability at the boundaries accumulates according to:
 \begin{align}\label{eqn-transform-boundary}
 \frac{\partial P_L}{\partial T}(T) &= \lim_{z \to z^{-}} \frac{1}{2} \frac{1}{C(z)} \frac{\partial C(z)E(T,z)\theta(T,z)}{\partial z}\\
@@ -508,7 +508,7 @@ The probability density approach is more accurate with less time steps, and more
 
 
 \section{Conclusion}
-It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple and efficient way to improve accuracy significantly compared to Crank-Nicolson on this problem. BDF2 is even more simple and more efficient. Other schemes such as TR-BDF2 or Lawson-Swayne can further increase efficiency. In our experiments TR-BDF2 and Lawson-Swayne were robust and had similar stability and convergence properties.
+It is possible to accurately compute option prices under the arbitrage free SABR approach with very few time-steps, even for long maturities. The Rannacher smoothing is a particularly simple way to improve accuracy significantly compared to Crank-Nicolson on this problem. However, as the number of time-steps decreases, the lower convergence of the Euler smoothing steps becomes more apparent. The simpler BDF2 is more efficient on this problem. Other less well known schemes such as TR-BDF2 or Lawson-Swayne further increase efficiency. In our experiments TR-BDF2 and Lawson-Swayne were robust and had similar stability and convergence properties.
 
 
 Thus, with a careful choice of finite difference scheme, \citep{hagan2013arbitrage} is particularly competitive to the one step finite difference approach of \citep{andreasen2011zabr}.
